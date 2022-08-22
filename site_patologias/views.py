@@ -16,7 +16,7 @@ def testeGrafico(request):
     
     fig = px.line(df, x="x", y="y", title="Teste de Gráfico")
     grafico = fig.to_html()
-    contexto = {'grafico':grafico}
+    contexto = {'grafico1':grafico}
 
     print(df.head())
     return render(request, 'home.html', context=contexto)
