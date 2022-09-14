@@ -2,12 +2,77 @@
 
 {% block conteudo %}
 
+<div class="container">
+    <div class="row">
+        <div class="col">
+                <div class="row">
+                    <div class="container p-2">
+                        <div class="card">
+                            <div class="card-header">
+                                <p class="card-text">Nº de Ocorrências no Total</p>
+                            </div>
+                            <div class="card-body">
+                                <h4 class="card-title">500</h3>
+                                <p class="card-text">ocorrências registradas.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="container p-2">
+                        <div class="card">
+                            <div class="card-header">
+                                <p class="card-text">Setor com mais ocorrências</p>
+                            </div>
+                            <div class="card-body">
+                                <h4 class="card-title">{{setor_mais_ocorrencias}}</h3>
+                                <p class="card-text">{{n_ocorr_setor_mais_ocorrencias}} ocorrências registradas.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="container p-2">
+                        <div class="card">
+                            <div class="card-header">
+                                <p class="card-text">Tipo de Patologia com a maior ocorrência</p>
+                            </div>
+                            <div class="card-body">
+                                <h4 class="card-title">{{tipo_patologia_maior_ocorrencia}}</h3>
+                                <p class="card-text">{{n_ocorr_setor_mais_ocorrencias}} ocorrências registradas.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </div>
+        <div class="col">
+            <div class="row">
+                <div class="container p-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <p class="card-text">Variação das ocorrências ao longo dos meses</p>
+                        </div>
+                        <div class="card-body">
+                            {{grafico1|safe}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="container p-2">
+                    <div class="card">
+                        <div class="card-header">
+                            <p class="card-text">Variação das ocorrências ao longo dos meses</p>
+                        </div>
+                        <div class="card-body">
+                            {{grafico2|safe}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+</div>
+
 {{grafico|safe}}
-
-<br>
-
-{{grafico2|safe}}
-
-<p>Testando o rolê</p>
 
 {% endblock conteudo %}

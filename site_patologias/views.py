@@ -16,7 +16,16 @@ def testeGrafico(request):
     
     fig = px.line(df, x="x", y="y", title="Teste de Gráfico")
     grafico = fig.to_html()
-    contexto = {'grafico1':grafico}
+
+    setor_mais_ocorrencias = "Alojamento Masculino Bloco B"
+    n_ocorr_setor_mais_ocorrencias = 12
+
+    tipo_patologia_maior_ocorrencia = "Infiltração"
+
+    contexto = {'grafico1':grafico,
+                'setor_mais_ocorrencias':setor_mais_ocorrencias,
+                'n_ocorr_setor_mais_ocorrencias':n_ocorr_setor_mais_ocorrencias,
+                'tipo_patologia_maior_ocorrencia':tipo_patologia_maior_ocorrencia}
 
     print(df.head())
     return render(request, 'home.html', context=contexto)
