@@ -3,10 +3,14 @@ from django.http import HttpResponse
 
 import pandas as pd
 import plotly.express as px
+import requests
+from dotenv import load_dotenv
+import os 
+load_dotenv()
 
 # Create your views here.
 def viewHome(request):
-    return HttpResponse("Olá Mundão!")
+    return HttpResponse()
 
 def testeGrafico(request):
     df = pd.DataFrame(dict(
@@ -29,3 +33,25 @@ def testeGrafico(request):
 
     print(df.head())
     return render(request, 'home.html', context=contexto)
+
+def tabela_ocorrencias(request):
+    api_url = str(os.getenv('API_BASE_URL'))+"/ocorrencias"
+    req = requests.get(api_url)
+    dados = dict(req.json())
+    chaves = []
+
+    for registro in dados["results"]:
+        chaves.append(registro["key"])
+
+    registros_ocorrencias = []
+    for chave in chaves:
+        url = api_url + "/" + chave
+        req = requests.get(url)
+        dados = dict(req.json())
+        registros_ocorrencias.append([dados['props']['nomeSetor'],dados['props']['patologia'],dados['props']['tempoPatologia'],dados['props']['urgencia'],dados['props']['textoDetalhes'],dados['props']['dataRegistro'],dados['props']['foto']])
+    print(registros_ocorrencias)
+
+    df = pd.DataFrame(registros_ocorrencias, columns=['Nome do Setor', 'Patologia', 'Tempo que vê a patologia','É urgente?','Detalhes','Data do Registro','Foto'])
+    contexto = {'tabela_ocorrencias':df}
+
+    return render(request, 'tabela_ocorrencias.html', context=contexto)

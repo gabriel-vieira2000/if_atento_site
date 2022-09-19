@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block conteudo %}
+    <table class="table table-bordered table-striped table-hover table-sm" style="padding:5%;">
+        <thead>
+            <tr>
+                <td>
+
+                </td>
+                {% for col in tabela_ocorrencias.columns %}
+                    <td>
+                    {{col}}
+                    </td>
+                {% endfor %}
+            </tr>
+        </thead>
+        {% for index, row in tabela_ocorrencias.iterrows %}
+            <tr>
+                <td>
+                    {{index}}
+                </td>
+                {% for atributo in row %}
+                    {% if 's3.amazonaws.com/' in atributo %}
+                        <td>
+                            <img src={{atributo}} style="width:50px;" />
+                        </td>
+                    {% else %}
+                    <td>
+                        {{atributo}}
+                    </td>
+                    {% endif %}
+                {% endfor %}
+            </tr>
+        {% endfor %}
+  </table>
+{% endblock conteudo %}
