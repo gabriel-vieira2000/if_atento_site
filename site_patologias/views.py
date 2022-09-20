@@ -8,9 +8,44 @@ from dotenv import load_dotenv
 import os 
 load_dotenv()
 
+lista_nomes_patologias = ["Infiltração", "Carbonatação ou Corrosão do Aço", "Deslocamento no revestimento", "Fissura ou Trincas", "Bolhas", "Vidro Quebrado", "Falta de iluminação", "Lixo ou sujeira acumulada"]
+
 # Create your views here.
 def viewHome(request):
-    return HttpResponse()
+
+    caminho_pasta = os.path.dirname(__file__)
+    dados_csv = os.path.join(caminho_pasta, 'dados_ocorrencias.csv')
+    df = pd.read_csv(dados_csv)
+
+    n_total_ocorrencias = df.shape[0]
+
+    setor_mais_ocorrencias = df.groupby(["Nome do Setor"])["Nome do Setor"].count().reset_index(name="Quantidade de Registros").sort_values(by="Quantidade de Registros")
+    nome_setor_mais_ocorrencias = setor_mais_ocorrencias.loc[0]["Nome do Setor"]
+    n_ocorr_setor_mais_ocorrencias = setor_mais_ocorrencias.loc[0]["Quantidade de Registros"]
+
+    global lista_nomes_patologias
+    patologia_mais_ocorrencias = df.groupby(["Patologia"])["Patologia"].count().reset_index(name="Quantidade de Registros").sort_values(by="Quantidade de Registros")
+    tipo_patologia_maior_ocorrencia = lista_nomes_patologias[int(patologia_mais_ocorrencias.loc[0]["Patologia"])]
+    n_ocorr_patologia_maior_ocorrencia = patologia_mais_ocorrencias.loc[0]["Quantidade de Registros"]
+    
+    contexto = {
+        'n_total_ocorrencias':n_total_ocorrencias,
+        'setor_mais_ocorrencias':nome_setor_mais_ocorrencias,
+        'n_ocorr_setor_mais_ocorrencias':n_ocorr_setor_mais_ocorrencias,
+        'tipo_patologia_maior_ocorrencia':tipo_patologia_maior_ocorrencia,
+        'n_ocorr_patologia_maior_ocorrencia':n_ocorr_patologia_maior_ocorrencia
+    }
+
+    return render(request, 'home.html', context=contexto)
+
+def viewTabelaOcorrencias(request):
+    caminho_pasta = os.path.dirname(__file__)
+    dados_csv = os.path.join(caminho_pasta, 'dados_ocorrencias.csv')
+    df = pd.read_csv(dados_csv)
+    df.drop("Unnamed: 0", axis=1)
+    contexto = {'tabela_ocorrencias':df}
+
+    return render(request, 'tabela_ocorrencias.html', context=contexto)
 
 def testeGrafico(request):
     df = pd.DataFrame(dict(
@@ -20,21 +55,9 @@ def testeGrafico(request):
     
     fig = px.line(df, x="x", y="y", title="Teste de Gráfico")
     grafico = fig.to_html()
-
-    setor_mais_ocorrencias = "Alojamento Masculino Bloco B"
-    n_ocorr_setor_mais_ocorrencias = 12
-
-    tipo_patologia_maior_ocorrencia = "Infiltração"
-
-    contexto = {'grafico1':grafico,
-                'setor_mais_ocorrencias':setor_mais_ocorrencias,
-                'n_ocorr_setor_mais_ocorrencias':n_ocorr_setor_mais_ocorrencias,
-                'tipo_patologia_maior_ocorrencia':tipo_patologia_maior_ocorrencia}
-
-    print(df.head())
     return render(request, 'home.html', context=contexto)
 
-def tabela_ocorrencias(request):
+def atualiza_dados(request):
     api_url = str(os.getenv('API_BASE_URL'))+"/ocorrencias"
     req = requests.get(api_url)
     dados = dict(req.json())
@@ -52,6 +75,9 @@ def tabela_ocorrencias(request):
     print(registros_ocorrencias)
 
     df = pd.DataFrame(registros_ocorrencias, columns=['Nome do Setor', 'Patologia', 'Tempo que vê a patologia','É urgente?','Detalhes','Data do Registro','Foto'])
+    df.to_csv('dados_ocorrencias.csv')
     contexto = {'tabela_ocorrencias':df}
 
     return render(request, 'tabela_ocorrencias.html', context=contexto)
+
+    
