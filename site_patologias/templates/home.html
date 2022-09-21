@@ -53,7 +53,7 @@
                             <p class="card-text">Variação das ocorrências ao longo dos meses</p>
                         </div>
                         <div class="card-body">
-                            {{grafico1|safe}}
+                            <canvas id="graficoOcorrenciasPorMes"></canvas>
                         </div>
                     </div>
                 </div>
@@ -62,10 +62,10 @@
                 <div class="container p-2">
                     <div class="card shadow">
                         <div class="card-header">
-                            <p class="card-text">Variação das ocorrências ao longo dos meses</p>
+                            <p class="card-text">Porcentagem de Registros de Cada Patologia</p>
                         </div>
                         <div class="card-body">
-                            {{grafico2|safe}}
+                            <canvas id="graficoPorcentagemPatologias"></canvas>
                         </div>
                     </div>
                 </div>
@@ -73,6 +73,33 @@
     </div>
 </div>
 
-{{grafico|safe}}
+<script>
+    const labels = [{% for dado in dadosGrafico1_x%}'{{dado}}',{% endfor %}];
+  
+    const data = {
+      labels: labels,
+      datasets: [{
+        label: 'Quantidade de Ocorrências no Mês',
+        backgroundColor: 'rgb(255, 99, 132)',
+        borderColor: 'rgb(255, 99, 132)',
+        data: [{% for dado in dadosGrafico1_y%}{{dado}},{% endfor %}],
+      }]
+    };
+  
+    const config = {
+      type: 'line',
+      data: data,
+      options: {
+        
+      }
+    };
+</script>
+<script>
+    const graficoOcorrenciasPorMes = new Chart(
+      document.getElementById('graficoOcorrenciasPorMes'),
+      config
+    );
+</script>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
 {% endblock conteudo %}

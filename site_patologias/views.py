@@ -6,13 +6,18 @@ import plotly.express as px
 import requests
 from dotenv import load_dotenv
 import os 
+
+from .utils import geraGrafico
+
 load_dotenv()
 
 lista_nomes_patologias = ["Infiltração", "Carbonatação ou Corrosão do Aço", "Deslocamento no revestimento", "Fissura ou Trincas", "Bolhas", "Vidro Quebrado", "Falta de iluminação", "Lixo ou sujeira acumulada"]
 
-# Create your views here.
-def viewHome(request):
+# Funções Auxiliares
 
+
+# Views
+def viewHome(request):
     caminho_pasta = os.path.dirname(__file__)
     dados_csv = os.path.join(caminho_pasta, 'dados_ocorrencias.csv')
     df = pd.read_csv(dados_csv)
@@ -25,15 +30,28 @@ def viewHome(request):
 
     global lista_nomes_patologias
     patologia_mais_ocorrencias = df.groupby(["Patologia"])["Patologia"].count().reset_index(name="Quantidade de Registros").sort_values(by="Quantidade de Registros")
+
     tipo_patologia_maior_ocorrencia = lista_nomes_patologias[int(patologia_mais_ocorrencias.loc[0]["Patologia"])]
     n_ocorr_patologia_maior_ocorrencia = patologia_mais_ocorrencias.loc[0]["Quantidade de Registros"]
     
+    ocorrencias_por_dia = df.groupby("Data do Registro")["Data do Registro"].count().reset_index(name="Quantidade de Registros").sort_values(by="Data do Registro", ascending=True)
+    dias = ocorrencias_por_dia["Data do Registro"].tolist()
+    quantidade_ocorrencias = ocorrencias_por_dia["Quantidade de Registros"].tolist()
+
+    print(dias)
+    print(quantidade_ocorrencias)
+
+    dadosGrafico1_x = dias
+    dadosGrafico1_y = quantidade_ocorrencias
+
     contexto = {
         'n_total_ocorrencias':n_total_ocorrencias,
         'setor_mais_ocorrencias':nome_setor_mais_ocorrencias,
         'n_ocorr_setor_mais_ocorrencias':n_ocorr_setor_mais_ocorrencias,
         'tipo_patologia_maior_ocorrencia':tipo_patologia_maior_ocorrencia,
-        'n_ocorr_patologia_maior_ocorrencia':n_ocorr_patologia_maior_ocorrencia
+        'n_ocorr_patologia_maior_ocorrencia':n_ocorr_patologia_maior_ocorrencia,
+        'dadosGrafico1_x':dadosGrafico1_x,
+        'dadosGrafico1_y':dadosGrafico1_y
     }
 
     return render(request, 'home.html', context=contexto)
@@ -42,8 +60,9 @@ def viewTabelaOcorrencias(request):
     caminho_pasta = os.path.dirname(__file__)
     dados_csv = os.path.join(caminho_pasta, 'dados_ocorrencias.csv')
     df = pd.read_csv(dados_csv)
-    df.drop("Unnamed: 0", axis=1)
+    df.drop("Unnamed: 0", axis=1, inplace=True)
     contexto = {'tabela_ocorrencias':df}
+    print(df.info())
 
     return render(request, 'tabela_ocorrencias.html', context=contexto)
 

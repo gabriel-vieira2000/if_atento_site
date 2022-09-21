@@ -1,16 +1,16 @@
 {% extends 'base.html' %}
 
 {% block conteudo %}
-    <table class="table table-bordered table-striped table-hover table-sm" style="padding:5%;">
+    <table class="table table-bordered table-striped table-hover table-sm justify-content-center" style="width:90%;max-width:90%">
         <thead>
             <tr>
-                <td>
-
-                </td>
+                <th style="width: 3%">
+                    Índice
+                </th>
                 {% for col in tabela_ocorrencias.columns %}
-                    <td>
+                    <th style="width: 5%">
                     {{col}}
-                    </td>
+                    </th>
                 {% endfor %}
             </tr>
         </thead>
