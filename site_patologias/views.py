@@ -13,9 +13,6 @@ load_dotenv()
 
 lista_nomes_patologias = ["Infiltração", "Carbonatação ou Corrosão do Aço", "Deslocamento no revestimento", "Fissura ou Trincas", "Bolhas", "Vidro Quebrado", "Falta de iluminação", "Lixo ou sujeira acumulada"]
 
-# Funções Auxiliares
-
-
 # Views
 def viewHome(request):
     caminho_pasta = os.path.dirname(__file__)
@@ -76,7 +73,7 @@ def testeGrafico(request):
     grafico = fig.to_html()
     return render(request, 'home.html', context=contexto)
 
-def atualiza_dados(request):
+def atualizaDadosCSV(request):
     api_url = str(os.getenv('API_BASE_URL'))+"/ocorrencias"
     req = requests.get(api_url)
     dados = dict(req.json())
@@ -94,9 +91,9 @@ def atualiza_dados(request):
     print(registros_ocorrencias)
 
     df = pd.DataFrame(registros_ocorrencias, columns=['Nome do Setor', 'Patologia', 'Tempo que vê a patologia','É urgente?','Detalhes','Data do Registro','Foto'])
-    df.to_csv('dados_ocorrencias.csv')
+    df.to_csv('./site_patologias/dados_ocorrencias.csv')
     contexto = {'tabela_ocorrencias':df}
 
-    return render(request, 'tabela_ocorrencias.html', context=contexto)
+    return viewTabelaOcorrencias(request)
 
     
