@@ -59,7 +59,7 @@
                 </div>
             </div>
             <div class="row">
-                <div class="container p-2">
+                <div class="container p-2" style="he">
                     <div class="card shadow">
                         <div class="card-header">
                             <p class="card-text">Porcentagem de Registros de Cada Patologia</p>
@@ -75,7 +75,6 @@
 
 <script>
     const labels = [{% for dado in dadosGrafico1_x%}'{{dado}}',{% endfor %}];
-  
     const data = {
       labels: labels,
       datasets: [{
@@ -85,7 +84,6 @@
         data: [{% for dado in dadosGrafico1_y%}{{dado}},{% endfor %}],
       }]
     };
-  
     const config = {
       type: 'line',
       data: data,
@@ -98,6 +96,32 @@
     const graficoOcorrenciasPorMes = new Chart(
       document.getElementById('graficoOcorrenciasPorMes'),
       config
+    );
+</script>
+
+<script>
+    const labels2 = [{% for dado in dadosGrafico2_x%}'{{dado}}',{% endfor %}];
+    const data2 = {
+      labels: labels2,
+      datasets: [{
+        label: 'Quantidade de Ocorrências no Mês',
+        backgroundColor: [{% for cor in cores_patologias %}'{{cor}}',{% endfor %}],
+        data: [{% for dado in dadosGrafico2_y%}'{{dado}}',{% endfor %}],
+        hoverOffset: 4
+      }]
+    };
+    const config2 = {
+      type: 'pie',
+      data: data2,
+      options: {
+        
+      }
+    };
+</script>
+<script>
+    const graficoPorcentagemPatologias = new Chart(
+      document.getElementById('graficoPorcentagemPatologias'),
+      config2
     );
 </script>
 
