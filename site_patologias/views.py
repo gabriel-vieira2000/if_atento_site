@@ -22,50 +22,47 @@ def viewHome(request):
 
     n_total_ocorrencias = df.shape[0]
 
-    setor_mais_ocorrencias = df.groupby(["Nome do Setor"])["Nome do Setor"].count().reset_index(name="Quantidade de Registros").sort_values(by="Quantidade de Registros")
-    nome_setor_mais_ocorrencias = setor_mais_ocorrencias.loc[0]["Nome do Setor"]
-    n_ocorr_setor_mais_ocorrencias = setor_mais_ocorrencias.loc[0]["Quantidade de Registros"]
+    setor_mais_ocorrencias = df.groupby(["Nome do Setor"])["Nome do Setor"].count().reset_index(name="Quantidade de Registros").sort_values(by="Quantidade de Registros", ascending=False)
+    nome_setor_mais_ocorrencias = setor_mais_ocorrencias.iloc[0]["Nome do Setor"]
+    n_ocorr_setor_mais_ocorrencias = setor_mais_ocorrencias.iloc[0]["Quantidade de Registros"]
+    outros_cinco_setores_mais_ocorrencias = []
+    for i in range (1,6):
+        outros_cinco_setores_mais_ocorrencias.append([setor_mais_ocorrencias.iloc[i]["Nome do Setor"], setor_mais_ocorrencias.iloc[i]["Quantidade de Registros"]])
 
     global lista_nomes_patologias
-    ocorrencias_patologias = df.groupby(["Patologia"])["Patologia"].count().reset_index(name="Quantidade de Registros").sort_values(by="Quantidade de Registros")
+    ocorrencias_patologias = df.groupby(["Patologia"])["Patologia"].count().reset_index(name="Quantidade de Registros").sort_values(by="Quantidade de Registros", ascending=False)
+    tipo_patologia_maior_ocorrencia = lista_nomes_patologias[int(ocorrencias_patologias.iloc[0]["Patologia"])]
+    n_ocorr_patologia_maior_ocorrencia = ocorrencias_patologias.iloc[0]["Quantidade de Registros"]
 
-    tipo_patologia_maior_ocorrencia = lista_nomes_patologias[int(ocorrencias_patologias.loc[0]["Patologia"])]
-    n_ocorr_patologia_maior_ocorrencia = ocorrencias_patologias.loc[0]["Quantidade de Registros"]
+    ocorrencias_patologias = df.groupby(["Patologia"])["Patologia"].count().reset_index(name="Quantidade de Registros").sort_values(by="Quantidade de Registros", ascending=False)
+    tipo_patologia_maior_ocorrencia = lista_nomes_patologias[int(ocorrencias_patologias.iloc[0]["Patologia"])]
+    n_ocorr_patologia_maior_ocorrencia = ocorrencias_patologias.iloc[0]["Quantidade de Registros"]
 
-    cores_patologias = []
-    tipos_patologias = ocorrencias_patologias["Patologia"].tolist()
-    for i, tipo_patologia in enumerate(tipos_patologias):
-        print(tipo_patologia)
-        tipos_patologias[i] = lista_nomes_patologias[(int(tipo_patologia)-2)]
-        cores_patologias.append(lista_cores_tipos_patologias[(int(tipo_patologia)-2)])
-    print(tipos_patologias)
-    qtd_ocorrencias_patologias = ocorrencias_patologias["Quantidade de Registros"].tolist()
-    qtd_tipos_patologias = ocorrencias_patologias.shape[0]
+    ocorrencias_patologias = ocorrencias_patologias.values.tolist()
+    for patologia in ocorrencias_patologias:
+        patologia.append(lista_cores_tipos_patologias[int(patologia[0])])
+        patologia[0] =  lista_nomes_patologias[int(patologia[0])]
     
-    ocorrencias_por_dia = df.groupby("Data do Registro")["Data do Registro"].count().reset_index(name="Quantidade de Registros").sort_values(by="Data do Registro", ascending=True)
+    ocorrencias_por_dia = df.groupby("Data do Registro")["Data do Registro"].count().reset_index(name="Quantidade de Registros")
+    ocorrencias_por_dia["Data do Registro Formatada"] = pd.to_datetime(ocorrencias_por_dia["Data do Registro"], format="%d/%m/%Y")
+    ocorrencias_por_dia.sort_values(by="Data do Registro Formatada", inplace = True)
     dias = ocorrencias_por_dia["Data do Registro"].tolist()
     quantidade_ocorrencias = ocorrencias_por_dia["Quantidade de Registros"].tolist()
 
-    print(dias)
-    print(quantidade_ocorrencias)
-
     dadosGrafico1_x = dias
     dadosGrafico1_y = quantidade_ocorrencias
-    dadosGrafico2_x = tipos_patologias
-    dadosGrafico2_y = quantidade_ocorrencias
+    dadosGrafico2 = ocorrencias_patologias
 
     contexto = {
         'n_total_ocorrencias':n_total_ocorrencias,
         'setor_mais_ocorrencias':nome_setor_mais_ocorrencias,
         'n_ocorr_setor_mais_ocorrencias':n_ocorr_setor_mais_ocorrencias,
+        'outros_cinco_setores_mais_ocorrencias':outros_cinco_setores_mais_ocorrencias,
         'tipo_patologia_maior_ocorrencia':tipo_patologia_maior_ocorrencia,
         'n_ocorr_patologia_maior_ocorrencia':n_ocorr_patologia_maior_ocorrencia,
-        'qtd_tipos_patologias':qtd_tipos_patologias,
-        'cores_patologias':cores_patologias,
         'dadosGrafico1_x':dadosGrafico1_x,
         'dadosGrafico1_y':dadosGrafico1_y,
-        'dadosGrafico2_x':dadosGrafico2_x,
-        'dadosGrafico2_y':dadosGrafico2_y
+        'dadosGrafico2':dadosGrafico2
     }
 
     return render(request, 'home.html', context=contexto)
