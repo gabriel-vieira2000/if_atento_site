@@ -1,28 +1,23 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light d-flex space-between">
-    <a class="navbar-brand" href="#">IF Atento!</a>
+{% load static %}
+
+<nav class="navbar navbar-expand-lg navbar-light" style="--bs-bg-opacity: 1;background-color: #F0FED2;">
+    <a class="navbar-brand" href="/home" style="margin-left:1%"><img class="img-fluid" src="{% static 'logo_if_atento.png' %}" style="position:relative; height:80px;"/></a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
-    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+    <div class="collapse navbar-collapse" id="navbarNavDropdown" style="float:left;">
       <ul class="navbar-nav">
         <li class="nav-item active">
-          <a class="nav-link" href="#">Página Inicial</a>
+          <a class="nav-link" href="/home">Página Inicial</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Ocorrências</a>
+          <a class="nav-link" href="/ocorrencias">Ocorrências</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Setores</a>
+          <a class="nav-link" href="/setores">Setores</a>
         </li>
-        <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Administradores
-          </a>
-          <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-            <a class="dropdown-item" href="#">Action</a>
-            <a class="dropdown-item" href="#">Another action</a>
-            <a class="dropdown-item" href="#">Something else here</a>
-          </div>
+        <li class="nav-item">
+          <a class="nav-link" href="/administradores">Administradores</a>
         </li>
       </ul>
     </div>

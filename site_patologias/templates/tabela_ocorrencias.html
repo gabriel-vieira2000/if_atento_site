@@ -1,37 +1,114 @@
 {% extends 'base.html' %}
 
 {% block conteudo %}
-    <table class="table table-bordered table-striped table-hover table-sm justify-content-center" style="width:90%;max-width:90%">
-        <thead>
-            <tr>
-                <th style="width: 3%">
-                    Índice
-                </th>
-                {% for col in tabela_ocorrencias.columns %}
-                    <th style="width: 5%">
-                    {{col}}
+    <div class="d-flex justify-content-center align-items-center flex-column">
+        <table class="table table-bordered table-striped table-hover table-sm justify-content-center" style="width:90%;max-width:90%;background-color: whitesmoke;margin-top:1%;">
+            <caption>Ocorrências Registradas no Sistema</caption>
+            <thead>
+                <tr>
+                    <th class="text-center" style="width: 3%">
+                        Índice
                     </th>
-                {% endfor %}
-            </tr>
-        </thead>
-        {% for index, row in tabela_ocorrencias.iterrows %}
-            <tr>
-                <td>
-                    {{index}}
-                </td>
-                {% for atributo in row %}
-                    {% if 's3.amazonaws.com/' in atributo %}
-                        <td>
-                            <img src={{atributo}} style="width:50px;" />
-                        </td>
-                    {% else %}
-                    <td>
-                        {{atributo}}
+                    {% for col in tabela_ocorrencias.columns %}
+                        <th class="text-center" style="width: 5%">
+                        {{col}}
+                        </th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody id="tabela-ocorrencias">
+            {% for index, row in tabela_ocorrencias.iterrows %}
+                <tr id="registro-{{index}}">
+                    <td class="text-center" data="{{index}}">
+                        {{index}}
                     </td>
-                    {% endif %}
-                {% endfor %}
-            </tr>
-        {% endfor %}
-  </table>
-  <a src="/atualizaDados"><button class="btn btn-success">Atualizar Base de Dados</button></a>
+                    {% for atributo in row %}
+                        {% if 's3.amazonaws.com/' in atributo %}
+                            <td class="text-center" data="{{atributo}}">
+                                <img src={{atributo}} style="width:50px;" />
+                            </td>
+                        {% else %}
+                        <td class="text-center" data="{{atributo}}">
+                            {{atributo}}
+                        </td>
+                        {% endif %}
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <a src="/atualizaDados"><button class="btn btn-success">Atualizar Base de Dados</button></a>
+    </div>
+
+  <button type="button" id="botaoModal" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalOcorrencia" style="display:none;">
+  </button>
+
+
+  <div class="modal fade" id="modalOcorrencia" tabindex="-1" aria-labelledby="tituloModal" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="tituloModal"></h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col" id="fotoModal">
+                    
+                </div>
+                <div class="col-8">
+                    <div class="row" id="nomeSetorModal">
+                        Nome do Setor:
+                    </div>
+                    <div class="row" id="tipoPatologiaModal">
+                        Tipo de Patologia Encontrada: 
+                    </div>
+                    <div class="row" id="haQuantoTempoVeModal">
+                        Há quanto tempo vê: 
+                    </div>
+                    <div class="row" id="urgenciaModal">
+                        Acha Urgente: 
+                    </div>
+                    <div class="row" id="dataRegistroModal">
+                        Data do Registro: 
+                    </div>
+                    <div class="row" id="detalhesModal">
+                        Detalhes sobre a patologia: 
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Voltar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    tabela = document.getElementById("tabela-ocorrencias");
+
+    for(let i=0; i<tabela.childElementCount; i++)
+    {
+        console.log(tabela.children[i].getAttribute("id"));
+        document.getElementById(tabela.children[i].getAttribute("id")).addEventListener("click", function () {
+            for(let j=0; j<tabela.children[i].childElementCount; j++){
+                console.log(tabela.children[i].children[j].getAttribute("data"));
+            }
+            document.getElementById("tituloModal").innerHTML = "Detalhes da Ocorrência #" + tabela.children[i].children[0].getAttribute("data");
+            document.getElementById("nomeSetorModal").innerHTML = "<p><b>Nome do Setor:</b> " + tabela.children[i].children[1].getAttribute("data") + "</p>";
+            document.getElementById("tipoPatologiaModal").innerHTML = "<p><b>Tipo de Patologia Encontrada:</b> " + tabela.children[i].children[2].getAttribute("data") + "</p>";
+            document.getElementById("haQuantoTempoVeModal").innerHTML = "<p><b>Há quanto tempo vê:</b> " + tabela.children[i].children[3].getAttribute("data") + "</p>";
+            document.getElementById("urgenciaModal").innerHTML = "<p><b>Acha Urgente:</b> " + tabela.children[i].children[4].getAttribute("data") + "</p>";
+            document.getElementById("dataRegistroModal").innerHTML = "<p><b>Data do Registro:</b> " + tabela.children[i].children[6].getAttribute("data") + "</p>";
+            document.getElementById("detalhesModal").innerHTML = "<p><b>Detalhes:</b> " + tabela.children[i].children[5].getAttribute("data") + "</p>";
+            document.getElementById("fotoModal").innerHTML = "<img class='img-fluid img-thumbnail' src='" + tabela.children[i].children[7].getAttribute("data") + "' />";
+            document.getElementById("botaoModal").click();
+        });
+
+    }
+
+    
+  </script>
+
 {% endblock conteudo %}
