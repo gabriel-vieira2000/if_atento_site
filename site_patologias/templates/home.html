@@ -59,7 +59,7 @@
                 </div>
             </div>
             <div class="row">
-                <div class="container p-2" style="he">
+                <div class="container p-2">
                     <div class="card shadow">
                         <div class="card-header">
                             <p class="card-text">Porcentagem de Registros de Cada Patologia</p>
@@ -70,6 +70,32 @@
                     </div>
                 </div>
             </div>
+    </div>
+    <div class="row">
+        <div class="col-4">
+            <div class="container p-2">
+                <div class="card shadow">
+                    <div class="card-header">
+                        <p class="card-text">Desvio Padrão (Registros por dia) </p>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-text">{{desvio_padrao_ocorrencias_por_dia}}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="container p-2">
+                <div class="card shadow">
+                    <div class="card-header">
+                        <p class="card-text">Média de Ocorrências</p>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-text">{{media_ocorrencias_por_dia}} por dia</div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -111,7 +137,7 @@
       }]
     };
     const config2 = {
-      type: 'pie',
+      type: 'bar',
       data: data2,
       options: {
         

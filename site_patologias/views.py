@@ -22,9 +22,9 @@ def viewHome(request):
 
     n_total_ocorrencias = df.shape[0]
 
-    setor_mais_ocorrencias = df.groupby(["Nome do Setor"])["Nome do Setor"].count().reset_index(name="Quantidade de Registros").sort_values(by="Quantidade de Registros")
-    nome_setor_mais_ocorrencias = setor_mais_ocorrencias.loc[0]["Nome do Setor"]
-    n_ocorr_setor_mais_ocorrencias = setor_mais_ocorrencias.loc[0]["Quantidade de Registros"]
+    setor_mais_ocorrencias = df.groupby(["Nome do Setor"])["Nome do Setor"].count().reset_index(name="Quantidade de Registros").sort_values(by="Quantidade de Registros", ascending=False)
+    nome_setor_mais_ocorrencias = setor_mais_ocorrencias.iloc[0]["Nome do Setor"]
+    n_ocorr_setor_mais_ocorrencias = setor_mais_ocorrencias.iloc[0]["Quantidade de Registros"]
 
     global lista_nomes_patologias
     ocorrencias_patologias = df.groupby(["Patologia"])["Patologia"].count().reset_index(name="Quantidade de Registros").sort_values(by="Quantidade de Registros")
@@ -42,17 +42,20 @@ def viewHome(request):
     qtd_ocorrencias_patologias = ocorrencias_patologias["Quantidade de Registros"].tolist()
     qtd_tipos_patologias = ocorrencias_patologias.shape[0]
     
-    ocorrencias_por_dia = df.groupby("Data do Registro")["Data do Registro"].count().reset_index(name="Quantidade de Registros").sort_values(by="Data do Registro", ascending=True)
+    ocorrencias_por_dia = df.groupby("Data do Registro")["Data do Registro"].count().reset_index(name="Quantidade de Registros")
+    ocorrencias_por_dia["Data do Registro Formatada"] = pd.to_datetime(ocorrencias_por_dia["Data do Registro"], format="%d/%m/%Y")
+    ocorrencias_por_dia.sort_values(by="Data do Registro Formatada", inplace = True)
     dias = ocorrencias_por_dia["Data do Registro"].tolist()
     quantidade_ocorrencias = ocorrencias_por_dia["Quantidade de Registros"].tolist()
-
-    print(dias)
-    print(quantidade_ocorrencias)
 
     dadosGrafico1_x = dias
     dadosGrafico1_y = quantidade_ocorrencias
     dadosGrafico2_x = tipos_patologias
     dadosGrafico2_y = quantidade_ocorrencias
+
+    desvio_padrao_ocorrencias_por_dia = ocorrencias_por_dia["Quantidade de Registros"].std().round(2)
+    media_ocorrencias_por_dia = float(ocorrencias_por_dia.mean().round(1))
+    
 
     contexto = {
         'n_total_ocorrencias':n_total_ocorrencias,
@@ -65,7 +68,10 @@ def viewHome(request):
         'dadosGrafico1_x':dadosGrafico1_x,
         'dadosGrafico1_y':dadosGrafico1_y,
         'dadosGrafico2_x':dadosGrafico2_x,
-        'dadosGrafico2_y':dadosGrafico2_y
+        'dadosGrafico2_y':dadosGrafico2_y,
+
+        'desvio_padrao_ocorrencias_por_dia': desvio_padrao_ocorrencias_por_dia,
+        'media_ocorrencias_por_dia':media_ocorrencias_por_dia
     }
 
     return render(request, 'home.html', context=contexto)
