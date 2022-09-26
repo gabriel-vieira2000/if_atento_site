@@ -25,6 +25,9 @@ def viewHome(request):
     setor_mais_ocorrencias = df.groupby(["Nome do Setor"])["Nome do Setor"].count().reset_index(name="Quantidade de Registros").sort_values(by="Quantidade de Registros", ascending=False)
     nome_setor_mais_ocorrencias = setor_mais_ocorrencias.iloc[0]["Nome do Setor"]
     n_ocorr_setor_mais_ocorrencias = setor_mais_ocorrencias.iloc[0]["Quantidade de Registros"]
+    outros_cinco_setores_mais_ocorrencias = []
+    for i in range (1,6):
+        outros_cinco_setores_mais_ocorrencias.append([setor_mais_ocorrencias.iloc[i]["Nome do Setor"], setor_mais_ocorrencias.iloc[i]["Quantidade de Registros"]])
 
     global lista_nomes_patologias
     ocorrencias_patologias = df.groupby(["Patologia"])["Patologia"].count().reset_index(name="Quantidade de Registros").sort_values(by="Quantidade de Registros", ascending=False)
@@ -63,9 +66,7 @@ def viewHome(request):
         'n_ocorr_patologia_maior_ocorrencia':n_ocorr_patologia_maior_ocorrencia,
         'dadosGrafico1_x':dadosGrafico1_x,
         'dadosGrafico1_y':dadosGrafico1_y,
-        'dadosGrafico2_x':dadosGrafico2_x,
-        'dadosGrafico2_y':dadosGrafico2_y,
-
+        'dadosGrafico2':dadosGrafico2,
         'desvio_padrao_ocorrencias_por_dia': desvio_padrao_ocorrencias_por_dia,
         'media_ocorrencias_por_dia':media_ocorrencias_por_dia
     }
