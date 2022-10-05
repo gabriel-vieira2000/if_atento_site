@@ -25,9 +25,11 @@ def viewHome(request):
     setor_mais_ocorrencias = df.groupby(["Nome do Setor"])["Nome do Setor"].count().reset_index(name="Quantidade de Registros").sort_values(by="Quantidade de Registros", ascending=False)
     nome_setor_mais_ocorrencias = setor_mais_ocorrencias.iloc[0]["Nome do Setor"]
     n_ocorr_setor_mais_ocorrencias = setor_mais_ocorrencias.iloc[0]["Quantidade de Registros"]
-    outros_cinco_setores_mais_ocorrencias = []
-    for i in range (1,6):
-        outros_cinco_setores_mais_ocorrencias.append([setor_mais_ocorrencias.iloc[i]["Nome do Setor"], setor_mais_ocorrencias.iloc[i]["Quantidade de Registros"]])
+    outros_setores_mais_ocorrencias = []
+    for i in range (1,len(setor_mais_ocorrencias)):
+        if i > 5:
+            break
+        outros_setores_mais_ocorrencias.append([setor_mais_ocorrencias.iloc[i]["Nome do Setor"], setor_mais_ocorrencias.iloc[i]["Quantidade de Registros"]])
 
     global lista_nomes_patologias
     ocorrencias_patologias = df.groupby(["Patologia"])["Patologia"].count().reset_index(name="Quantidade de Registros").sort_values(by="Quantidade de Registros", ascending=False)
@@ -61,7 +63,7 @@ def viewHome(request):
         'n_total_ocorrencias':n_total_ocorrencias,
         'setor_mais_ocorrencias':nome_setor_mais_ocorrencias,
         'n_ocorr_setor_mais_ocorrencias':n_ocorr_setor_mais_ocorrencias,
-        'outros_cinco_setores_mais_ocorrencias':outros_cinco_setores_mais_ocorrencias,
+        'outros_setores_mais_ocorrencias':outros_setores_mais_ocorrencias,
         'tipo_patologia_maior_ocorrencia':tipo_patologia_maior_ocorrencia,
         'n_ocorr_patologia_maior_ocorrencia':n_ocorr_patologia_maior_ocorrencia,
         'dadosGrafico1_x':dadosGrafico1_x,
@@ -78,6 +80,9 @@ def viewTabelaOcorrencias(request):
     dados_csv = os.path.join(caminho_pasta, 'dados_ocorrencias.csv')
     df = pd.read_csv(dados_csv)
     df.drop("Unnamed: 0", axis=1, inplace=True)
+    df["Patologia"].replace([0,1,2,3,4,5,6,7], lista_nomes_patologias, inplace=True)
+    df["Tempo que vê a patologia"].replace([0,1,2], ["Primeira Vez que Vi", "Comecei a ver recentemente (< 1 ano)", "Já vejo a muito tempo? ( > 1 ano)"], inplace=True)
+    df["É urgente?"].replace([0,1],['Sim', 'Não'],inplace=True)
     contexto = {'tabela_ocorrencias':df}
     print(df.info())
 

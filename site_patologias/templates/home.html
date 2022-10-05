@@ -5,6 +5,14 @@
 <div class="container">
     <div class="row">
         <div class="col">
+            <div class="alert alert-warning d-flex p-2 flex-row justify-content-between align-items-center mt-2" role="alert">
+                <p class="col-10">Para otimizar o processamento, os dados que são utilizados para análise estão em um arquivo local do sistema que não é atualizado em tempo real. Para ver os dados mais recentes, basta clicar no botão ao lado.</p>
+                <a class="col-2" href="/atualizaDados"><button class="btn btn-success">ATUALIZAR OS DADOS</button></a>
+              </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
                 <div class="row">
                     <div class="container p-2">
                         <div class="card shadow">
@@ -48,10 +56,10 @@
                     <div class="container p-2">
                         <div class="card shadow">
                             <div class="card-header">
-                                <p class="card-text">Outros Cinco Setores com Mais Ocorrências</p>
+                                <p class="card-text">Outros Setores com Mais Ocorrências</p>
                             </div>
                             <div class="card-body">
-                                {% for setor in outros_cinco_setores_mais_ocorrencias %}
+                                {% for setor in outros_setores_mais_ocorrencias %}
                                     <h5 class="card-title">{{setor.0}}</h5>
                                     <h6 class="card-text">{{setor.1}} ocorrências registradas.</h6>
                                 {% endfor %}
@@ -65,7 +73,7 @@
                 <div class="container p-2">
                     <div class="card shadow">
                         <div class="card-header">
-                            <p class="card-text">Variação das ocorrências ao longo dos meses</p>
+                            <p class="card-text">Variação das ocorrências ao longo do tempo</p>
                         </div>
                         <div class="card-body">
                             <canvas id="graficoOcorrenciasPorMes" style="height:100px;"></canvas>
