@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
 {% block conteudo %}
+<div class="container">
     <div class="d-flex justify-content-center align-items-center flex-column">
         <table class="table table-bordered table-striped table-hover table-sm justify-content-center" style="width:90%;max-width:90%;background-color: whitesmoke;margin-top:1%;">
             <caption>Ocorrências Registradas no Sistema</caption>
@@ -37,8 +38,16 @@
             {% endfor %}
             </tbody>
         </table>
-        <a src="/atualizaDados"><button class="btn btn-success">Atualizar Base de Dados</button></a>
+        <div class="row">
+            <div class="col">
+                <div class="alert alert-warning d-flex p-2 flex-row justify-content-between align-items-center mt-2" role="alert">
+                    <p class="col-10">Para otimizar o processamento, os dados que são utilizados para análise estão em um arquivo local do sistema que não é atualizado em tempo real. Para ver os dados mais recentes, basta clicar no botão ao lado.</p>
+                    <a class="col-2" href="/atualizaDados"><button class="btn btn-success">ATUALIZAR OS DADOS</button></a>
+                  </div>
+            </div>
+        </div>
     </div>
+</div>
 
   <button type="button" id="botaoModal" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalOcorrencia" style="display:none;">
   </button>
