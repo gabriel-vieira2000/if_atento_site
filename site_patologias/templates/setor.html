@@ -1,0 +1,213 @@
+{% extends 'base.html' %}
+
+{% block conteudo %}
+
+<div class="container">
+    <div class="row">
+        <div class="col">
+            <div class="alert alert-warning d-flex p-2 flex-row justify-content-between align-items-center mt-2" role="alert">
+                <p class="col-10">Para otimizar o processamento, os dados que são utilizados para análise estão em um arquivo local do sistema que não é atualizado em tempo real. Para ver os dados mais recentes, basta clicar no botão ao lado.</p>
+                <a class="col-2" href="/atualizaDados"><button class="btn btn-success">ATUALIZAR OS DADOS</button></a>
+              </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6">
+            <h5 style="float:left">Escolha o setor desejado ao lado: </h5>
+        </div>
+        <div class="col-4">
+            <div class="row">
+                <form>
+                        <div class="form-group row">
+                            <select class="form-control" onchange="">
+                                {% for setor in setores%}
+                                    <option>{{setor}}</option>
+                                {% endfor %}
+                            </select> 
+                        </div>
+                </form>
+            </div>
+        </div>
+        <div class="col">
+            <button class="btn btn-success">Detalhar Setor</button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col">
+                <div class="row">
+                    <div class="container p-2">
+                        <div class="card shadow">
+                            <div class="card-header">
+                                <p class="card-text">Nº de Ocorrências no Total</p>
+                            </div>
+                            <div class="card-body">
+                                <h4 class="card-title">{{n_total_ocorrencias}}</h3>
+                                <p class="card-text">ocorrências registradas.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="container p-2">
+                        <div class="card shadow">
+                            <div class="card-header">
+                                <p class="card-text">Setor com mais ocorrências</p>
+                            </div>
+                            <div class="card-body">
+                                <h4 class="card-title">{{setor_mais_ocorrencias}}</h3>
+                                <p class="card-text">{{n_ocorr_setor_mais_ocorrencias}} ocorrências registradas.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="container p-2">
+                        <div class="card shadow">
+                            <div class="card-header">
+                                <p class="card-text">Tipo de Patologia com a maior ocorrência</p>
+                            </div>
+                            <div class="card-body">
+                                <h4 class="card-title">{{tipo_patologia_maior_ocorrencia}}</h3>
+                                <p class="card-text">{{n_ocorr_patologia_maior_ocorrencia}} ocorrências registradas.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="container p-2">
+                        <div class="card shadow">
+                            <div class="card-header">
+                                <p class="card-text">Outros Setores com Mais Ocorrências</p>
+                            </div>
+                            <div class="card-body">
+                                {% for setor in outros_setores_mais_ocorrencias %}
+                                    <h5 class="card-title">{{setor.0}}</h5>
+                                    <h6 class="card-text">{{setor.1}} ocorrências registradas.</h6>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        </div>
+        <div class="col-8">
+            <div class="row">
+                <div class="container p-2">
+                    <div class="card shadow">
+                        <div class="card-header">
+                            <p class="card-text">Variação das ocorrências ao longo do tempo</p>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="graficoOcorrenciasPorMes" style="height:100px;"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="container p-2">
+                    <div class="card shadow">
+                        <div class="card-header">
+                            <p class="card-text">Porcentagem de Registros de Cada Patologia</p>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="graficoPorcentagemPatologias"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+    <div class="row">
+        <div class="col-4">
+            <div class="container p-2">
+                <div class="card shadow">
+                    <div class="card-header">
+                        <p class="card-text">Desvio Padrão (Registros por dia) </p>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-text">{{desvio_padrao_ocorrencias_por_dia}}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="container p-2">
+                <div class="card shadow">
+                    <div class="card-header">
+                        <p class="card-text">Média de Ocorrências</p>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-text">{{media_ocorrencias_por_dia}} por dia</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const labels = [{% for dado in dadosGrafico1_x%}'{{dado}}',{% endfor %}];
+    const data = {
+      labels: labels,
+      datasets: [{
+        label: 'Quantidade de Ocorrências no Mês',
+        backgroundColor: '#247106',
+        borderColor: '#247106',
+        data: [{% for dado in dadosGrafico1_y%}{{dado}},{% endfor %}],
+      }]
+    };
+    const config = {
+      type: 'line',
+      data: data,
+      options: {
+        scales: {
+            y: {
+                min: 0,
+                ticks: {
+                    stepSize: 1
+                }
+            }
+        }
+      }
+    };
+</script>
+<script>
+    const graficoOcorrenciasPorMes = new Chart(
+      document.getElementById('graficoOcorrenciasPorMes'),
+      config
+    );
+</script>
+
+<script>
+    const labels2 = [{% for dado in dadosGrafico2%}'{{dado.0}}',{% endfor %}];
+    const data2 = {
+      labels: labels2,
+      datasets: [{
+        label: 'Quantidade de Ocorrências da Patologia',
+        backgroundColor: [{% for dado in dadosGrafico2%}'{{dado.2}}',{% endfor %}],
+        data: [{% for dado in dadosGrafico2%}'{{dado.1}}',{% endfor %}],
+        hoverOffset: 4
+      }]
+    };
+    const config2 = {
+      type: 'bar',
+      data: data2,
+      options: {
+        scales: {
+            y: {
+                min: 0,
+                ticks: {
+                    stepSize: 1
+                }
+            }
+        }
+      }
+    };
+</script>
+<script>
+    const graficoPorcentagemPatologias = new Chart(
+      document.getElementById('graficoPorcentagemPatologias'),
+      config2
+    );
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
+{% endblock conteudo %}

@@ -14,6 +14,9 @@ load_dotenv()
 lista_nomes_patologias = ["Infiltração", "Carbonatação ou Corrosão do Aço", "Deslocamento no revestimento", "Fissura ou Trincas", "Bolhas", "Vidro Quebrado", "Falta de iluminação", "Lixo ou sujeira acumulada"]
 lista_cores_tipos_patologias = ["#003f5c","#2f4b7c", "#665191", "#a05195", "#d45087","#f95d6a", "#ff7c43","#ffa600"]
 
+setores = ['Alojamento Masculino Bloco B', 'Hospital Veterinário', 'Prefeitura e Estacionamento', 'Canil', 'Granja de Frango de Corte']
+
+
 # Views
 def viewHome(request):
     caminho_pasta = os.path.dirname(__file__)
@@ -111,8 +114,25 @@ def atualizaDadosCSV(request):
 
     return viewTabelaOcorrencias(request)
 
-def testeParametrosRota(request, paramRota):
-    print(paramRota)
-    return render(request, 'home.html')
+def viewSetores(request, idSetor):
+    print(idSetor)
+    print(setores[idSetor-1])
+
+    caminho_pasta = os.path.dirname(__file__)
+    dados_csv = os.path.join(caminho_pasta, 'dados_ocorrencias.csv')
+    df = pd.read_csv(dados_csv)
+
+    df.rename(columns={'Nome do Setor': 'NomeDoSetor'}, inplace=True)
+    condicao = "NomeDoSetor == '"+setores[idSetor-1]+"'"
+    df = df.query(condicao)
+
+    n_total_ocorrencias = df.shape[0]
+
+    contexto = {
+        'setores': setores,
+        'n_total_ocorrencias':n_total_ocorrencias
+    }
+
+    return render(request, 'setor.html', context=contexto)
 
     
