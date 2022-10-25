@@ -88,16 +88,6 @@ def viewTabelaOcorrencias(request):
 
     return render(request, 'tabela_ocorrencias.html', context=contexto)
 
-def testeGrafico(request):
-    df = pd.DataFrame(dict(
-        x = [1, 3, 2, 4],
-        y = [1, 2, 3, 4]
-    ))
-    
-    fig = px.line(df, x="x", y="y", title="Teste de Gráfico")
-    grafico = fig.to_html()
-    return render(request, 'home.html', context=contexto)
-
 def atualizaDadosCSV(request):
     api_url = str(os.getenv('API_BASE_URL'))+"/ocorrencias"
     req = requests.get(api_url)
@@ -120,5 +110,9 @@ def atualizaDadosCSV(request):
     contexto = {'tabela_ocorrencias':df}
 
     return viewTabelaOcorrencias(request)
+
+def testeParametrosRota(request, paramRota):
+    print(paramRota)
+    return render(request, 'home.html')
 
     
