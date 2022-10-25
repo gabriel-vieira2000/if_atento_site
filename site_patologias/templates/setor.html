@@ -13,23 +13,24 @@
     </div>
     <div class="row">
         <div class="col-6">
-            <h5 style="float:left">Escolha o setor desejado ao lado: </h5>
+            <h5>Setor Selecionado: {{nomeSetor}}</h5>
         </div>
         <div class="col-4">
             <div class="row">
                 <form>
                         <div class="form-group row">
-                            <select class="form-control" onchange="">
+                            <select class="form-control" id="selectSetor">
+                                    <option value="-1">Selecione outro setor...</option>
                                 {% for setor in setores%}
-                                    <option>{{setor}}</option>
+                                    <option value="{{setor.0}}">{{setor.1}}</option>
                                 {% endfor %}
                             </select> 
                         </div>
-                </form>
             </div>
         </div>
         <div class="col">
-            <button class="btn btn-success">Detalhar Setor</button>
+            <a href="../setores/1" id="botaoSelecionaSetor" class="btn btn-success">Alterar Setor</a>
+            </form>
         </div>
     </div>
     <div class="row">
@@ -51,11 +52,11 @@
                     <div class="container p-2">
                         <div class="card shadow">
                             <div class="card-header">
-                                <p class="card-text">Setor com mais ocorrências</p>
+                                <p class="card-text">Porcentagem de Urgência</p>
                             </div>
                             <div class="card-body">
-                                <h4 class="card-title">{{setor_mais_ocorrencias}}</h3>
-                                <p class="card-text">{{n_ocorr_setor_mais_ocorrencias}} ocorrências registradas.</p>
+                                <h4 class="card-title">{{porcentagemUrgencia}}% </h3>
+                                <p class="card-text">dos registros são urgentes.</p>
                             </div>
                         </div>
                     </div>
@@ -77,13 +78,28 @@
                     <div class="container p-2">
                         <div class="card shadow">
                             <div class="card-header">
-                                <p class="card-text">Outros Setores com Mais Ocorrências</p>
+                                <p class="card-text">Dia com mais ocorrências registradas</p>
                             </div>
                             <div class="card-body">
-                                {% for setor in outros_setores_mais_ocorrencias %}
-                                    <h5 class="card-title">{{setor.0}}</h5>
-                                    <h6 class="card-text">{{setor.1}} ocorrências registradas.</h6>
-                                {% endfor %}
+                                <h4 class="card-title">{{dia_mais_ocorrencias_setor}}</h3>
+                                <p class="card-text">{{qtd_registros_dia_mais_ocorrencias_setor}} ocorrências registradas.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="container p-2">
+                        <div class="card shadow">
+                            <div class="card-header">
+                                <p class="card-text">Há quanto tempo veem as patologias?</p>
+                            </div>
+                            <div class="card-body">
+                                <h4 class="card-title">30%</h3>
+                                <p class="card-text">Primeira Vez que Vi</p>
+                                <h4 class="card-title">20%</h3>
+                                <p class="card-text">Comecei a ver recentemente (<1 ano) </p>
+                                <h4 class="card-title">20%</h3>
+                                <p class="card-text">Já vejo a muito tempo (>1 ano) </p>
                             </div>
                         </div>
                     </div>
@@ -109,37 +125,13 @@
                             <p class="card-text">Porcentagem de Registros de Cada Patologia</p>
                         </div>
                         <div class="card-body">
-                            <canvas id="graficoPorcentagemPatologias"></canvas>
+                            <div style="height:400px;">
+                                <canvas id="graficoPorcentagemPatologias"></canvas>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-    </div>
-    <div class="row">
-        <div class="col-4">
-            <div class="container p-2">
-                <div class="card shadow">
-                    <div class="card-header">
-                        <p class="card-text">Desvio Padrão (Registros por dia) </p>
-                    </div>
-                    <div class="card-body">
-                        <div class="card-text">{{desvio_padrao_ocorrencias_por_dia}}</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-3">
-            <div class="container p-2">
-                <div class="card shadow">
-                    <div class="card-header">
-                        <p class="card-text">Média de Ocorrências</p>
-                    </div>
-                    <div class="card-body">
-                        <div class="card-text">{{media_ocorrencias_por_dia}} por dia</div>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 </div>
 
@@ -188,17 +180,11 @@
       }]
     };
     const config2 = {
-      type: 'bar',
+      type: 'pie',
       data: data2,
       options: {
-        scales: {
-            y: {
-                min: 0,
-                ticks: {
-                    stepSize: 1
-                }
-            }
-        }
+        responsive: true,
+        maintainAspectRatio: false
       }
     };
 </script>
@@ -207,6 +193,22 @@
       document.getElementById('graficoPorcentagemPatologias'),
       config2
     );
+</script>
+
+<script>
+    var setorSelecionado = 1;
+
+    var botaoSetor = document.getElementById("botaoSelecionaSetor");
+
+    document.getElementById("selectSetor").addEventListener("change", function (event) {
+        setorSelecionado = event.target.value;
+        botaoSetor.href = `../setores/${setorSelecionado}`
+    });
+
+    //document.getElementById("botaoSelecionaSetor").addEventListener("click", function () {
+        //location.href = window.location.origin+'/setores/'+setorSelecionado;
+        //location.href = `http://localhost:8000/setores/${setorSelecionado}`
+    //});
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>

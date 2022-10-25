@@ -122,15 +122,64 @@ def viewSetores(request, idSetor):
     dados_csv = os.path.join(caminho_pasta, 'dados_ocorrencias.csv')
     df = pd.read_csv(dados_csv)
 
-    df.rename(columns={'Nome do Setor': 'NomeDoSetor'}, inplace=True)
+    df.rename(columns={'Nome do Setor': 'NomeDoSetor', "É urgente?":"Urgente"}, inplace=True)
     condicao = "NomeDoSetor == '"+setores[idSetor-1]+"'"
     df = df.query(condicao)
+    print(df["Urgente"])
 
+    nomeSetor = setores[idSetor-1]
+
+    setoresComID = []
+    id = 1
+    for setor in setores:
+        setoresComID.append([id, setor])
+        id += 1
+    
     n_total_ocorrencias = df.shape[0]
 
+    quantidadeUrgentes = int(df.query("Urgente == 1").shape[0])
+    porcentagemUrgencia = (quantidadeUrgentes/int(n_total_ocorrencias)) * 100
+
+    global lista_nomes_patologias
+    ocorrencias_patologias = df.groupby(["Patologia"])["Patologia"].count().reset_index(name="Quantidade de Registros").sort_values(by="Quantidade de Registros", ascending=False)
+    tipo_patologia_maior_ocorrencia = lista_nomes_patologias[int(ocorrencias_patologias.iloc[0]["Patologia"])]
+    n_ocorr_patologia_maior_ocorrencia = ocorrencias_patologias.iloc[0]["Quantidade de Registros"]
+
+    ocorrencias_patologias = df.groupby(["Patologia"])["Patologia"].count().reset_index(name="Quantidade de Registros").sort_values(by="Quantidade de Registros", ascending=False)
+    tipo_patologia_maior_ocorrencia = lista_nomes_patologias[int(ocorrencias_patologias.iloc[0]["Patologia"])]
+    n_ocorr_patologia_maior_ocorrencia = ocorrencias_patologias.iloc[0]["Quantidade de Registros"]
+
+    ocorrencias_patologias = ocorrencias_patologias.values.tolist()
+    for patologia in ocorrencias_patologias:
+        patologia.append(lista_cores_tipos_patologias[int(patologia[0])])
+        patologia[0] =  lista_nomes_patologias[int(patologia[0])]
+    
+    ocorrencias_por_dia = df.groupby("Data do Registro")["Data do Registro"].count().reset_index(name="Quantidade de Registros")
+    ocorrencias_por_dia["Data do Registro Formatada"] = pd.to_datetime(ocorrencias_por_dia["Data do Registro"], format="%d/%m/%Y")
+    ocorrencias_por_dia.sort_values(by="Data do Registro Formatada", inplace = True)
+    dias = ocorrencias_por_dia["Data do Registro"].tolist()
+    quantidade_ocorrencias = ocorrencias_por_dia["Quantidade de Registros"].tolist()
+
+    dias_ocorrencias_setor = df.groupby("Data do Registro")["Data do Registro"].count().reset_index(name="Quantidade de Registros").sort_values(by="Quantidade de Registros", ascending=False)
+    dia_mais_ocorrencias_setor = dias_ocorrencias_setor.iloc[0]["Data do Registro"]
+    qtd_registros_dia_mais_ocorrencias_setor = dias_ocorrencias_setor.iloc[0]["Quantidade de Registros"]
+
+    dadosGrafico1_x = dias
+    dadosGrafico1_y = quantidade_ocorrencias
+    dadosGrafico2 = ocorrencias_patologias
+
     contexto = {
-        'setores': setores,
-        'n_total_ocorrencias':n_total_ocorrencias
+        'nomeSetor': nomeSetor,
+        'setores': setoresComID,
+        'n_total_ocorrencias':n_total_ocorrencias,
+        'porcentagemUrgencia': porcentagemUrgencia,
+        'dia_mais_ocorrencias_setor':dia_mais_ocorrencias_setor,
+        'qtd_registros_dia_mais_ocorrencias_setor':qtd_registros_dia_mais_ocorrencias_setor,
+        'tipo_patologia_maior_ocorrencia': tipo_patologia_maior_ocorrencia,
+        'n_ocorr_patologia_maior_ocorrencia': n_ocorr_patologia_maior_ocorrencia,
+        'dadosGrafico1_x': dadosGrafico1_x,
+        'dadosGrafico1_y': dadosGrafico1_y,
+        'dadosGrafico2': dadosGrafico2
     }
 
     return render(request, 'setor.html', context=contexto)
