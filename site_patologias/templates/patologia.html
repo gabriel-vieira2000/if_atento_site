@@ -13,23 +13,23 @@
     </div>
     <div class="row">
         <div class="col-6">
-            <h5>Setor Selecionado: {{nomeSetor}}</h5>
+            <h5>Patologia: {{nomePatologia}}</h5>
         </div>
         <div class="col-4">
             <div class="row">
                 <form>
                         <div class="form-group row">
-                            <select class="form-control" id="selectSetor">
-                                    <option value="-1">Selecione outro setor...</option>
-                                {% for setor in setores%}
-                                    <option value="{{setor.0}}">{{setor.1}}</option>
+                            <select class="form-control" id="selectPatologia">
+                                    <option value="-1">Selecione outra patologia...</option>
+                                {% for patologia in patologias%}
+                                    <option value="{{patologia.0}}">{{patologia.1}}</option>
                                 {% endfor %}
                             </select> 
                         </div>
             </div>
         </div>
         <div class="col">
-            <a href="../setores/1" id="botaoSelecionaSetor" class="btn btn-success">Alterar Setor</a>
+            <a href="../patologias/1" id="botaoSelecionaPatologia" class="btn btn-success">Alterar Patologia</a>
             </form>
         </div>
     </div>
@@ -65,11 +65,11 @@
                     <div class="container p-2">
                         <div class="card shadow">
                             <div class="card-header">
-                                <p class="card-text">Tipo de Patologia com a maior ocorrência</p>
+                                <p class="card-text">Setor com mais ocorrências da patologia</p>
                             </div>
                             <div class="card-body">
-                                <h4 class="card-title">{{tipo_patologia_maior_ocorrencia}}</h3>
-                                <p class="card-text">{{n_ocorr_patologia_maior_ocorrencia}} ocorrências registradas.</p>
+                                <h4 class="card-title">{{setor_mais_ocorrencias}}</h3>
+                                <p class="card-text">{{n_ocorr_setor_mais_ocorrencias}} ocorrências registradas.</p>
                             </div>
                         </div>
                     </div>
@@ -81,8 +81,8 @@
                                 <p class="card-text">Dia com mais ocorrências registradas</p>
                             </div>
                             <div class="card-body">
-                                <h4 class="card-title">{{dia_mais_ocorrencias_setor}}</h3>
-                                <p class="card-text">{{qtd_registros_dia_mais_ocorrencias_setor}} ocorrências registradas.</p>
+                                <h4 class="card-title">{{dia_mais_ocorrencias_patologia}}</h3>
+                                <p class="card-text">{{qtd_registros_dia_mais_ocorrencias_patologia}} ocorrências registradas.</p>
                             </div>
                         </div>
                     </div>
@@ -122,7 +122,7 @@
                 <div class="container p-2">
                     <div class="card shadow">
                         <div class="card-header">
-                            <p class="card-text">Porcentagem de Registros de Cada Patologia</p>
+                            <p class="card-text">Registros da Patologia por Setor</p>
                         </div>
                         <div class="card-body">
                             <div style="height:400px;">
@@ -180,7 +180,7 @@
       }]
     };
     const config2 = {
-      type: 'pie',
+      type: 'bar',
       data: data2,
       options: {
         responsive: true,
@@ -198,17 +198,12 @@
 <script>
     var setorSelecionado = 1;
 
-    var botaoSetor = document.getElementById("botaoSelecionaSetor");
+    var botaoSetor = document.getElementById("botaoSelecionaPatologia");
 
-    document.getElementById("selectSetor").addEventListener("change", function (event) {
+    document.getElementById("selectPatologia").addEventListener("change", function (event) {
         setorSelecionado = event.target.value;
-        botaoSetor.href = `../setores/${setorSelecionado}`
+        botaoSetor.href = `../patologias/${setorSelecionado}`
     });
-
-    //document.getElementById("botaoSelecionaSetor").addEventListener("click", function () {
-        //location.href = window.location.origin+'/setores/'+setorSelecionado;
-        //location.href = `http://localhost:8000/setores/${setorSelecionado}`
-    //});
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>

@@ -6,6 +6,7 @@ import plotly.express as px
 import requests
 from dotenv import load_dotenv
 import os 
+import math
 
 from .utils import geraGrafico
 
@@ -18,6 +19,9 @@ setores = ['Alojamento Masculino Bloco B', 'Hospital Veterinário', 'Prefeitura 
 
 
 # Views
+def viewLogin(request):
+    return render(request, 'login.html')
+
 def viewHome(request):
     caminho_pasta = os.path.dirname(__file__)
     dados_csv = os.path.join(caminho_pasta, 'dados_ocorrencias.csv')
@@ -122,7 +126,7 @@ def viewSetores(request, idSetor):
     dados_csv = os.path.join(caminho_pasta, 'dados_ocorrencias.csv')
     df = pd.read_csv(dados_csv)
 
-    df.rename(columns={'Nome do Setor': 'NomeDoSetor', "É urgente?":"Urgente"}, inplace=True)
+    df.rename(columns={'Nome do Setor': 'NomeDoSetor', "É urgente?":"Urgente", "Tempo que vê a patologia":"TempoQueVe"}, inplace=True)
     condicao = "NomeDoSetor == '"+setores[idSetor-1]+"'"
     df = df.query(condicao)
     print(df["Urgente"])
@@ -138,7 +142,7 @@ def viewSetores(request, idSetor):
     n_total_ocorrencias = df.shape[0]
 
     quantidadeUrgentes = int(df.query("Urgente == 1").shape[0])
-    porcentagemUrgencia = (quantidadeUrgentes/int(n_total_ocorrencias)) * 100
+    porcentagemUrgencia = math.floor((quantidadeUrgentes/int(n_total_ocorrencias)) * 100)
 
     global lista_nomes_patologias
     ocorrencias_patologias = df.groupby(["Patologia"])["Patologia"].count().reset_index(name="Quantidade de Registros").sort_values(by="Quantidade de Registros", ascending=False)
@@ -164,6 +168,25 @@ def viewSetores(request, idSetor):
     dia_mais_ocorrencias_setor = dias_ocorrencias_setor.iloc[0]["Data do Registro"]
     qtd_registros_dia_mais_ocorrencias_setor = dias_ocorrencias_setor.iloc[0]["Quantidade de Registros"]
 
+    porcentagemPrimeiraVezViu = int(df.query("TempoQueVe == 0").shape[0])
+    porcentagemPrimeiraVezViu = math.floor((porcentagemPrimeiraVezViu/int(n_total_ocorrencias)) * 100)
+    quantidadePrimeiraVezViu = int(df.query("TempoQueVe == 0").shape[0])
+    
+    porcentagemComecouRecentemente = int(df.query("TempoQueVe == 1").shape[0])
+    porcentagemComecouRecentemente = math.floor((porcentagemComecouRecentemente/int(n_total_ocorrencias)) * 100)
+    quantidadeComecouRecentemente = int(df.query("TempoQueVe == 1").shape[0])
+
+    porcentagemVeFazTempo = int(df.query("TempoQueVe == 2").shape[0])
+    porcentagemVeFazTempo = math.floor((porcentagemVeFazTempo/int(n_total_ocorrencias)) * 100)
+    quantidadeVeFazTempo = int(df.query("TempoQueVe == 2").shape[0])
+    
+    print(porcentagemPrimeiraVezViu)
+    print(quantidadePrimeiraVezViu)
+    print(porcentagemComecouRecentemente)
+    print(quantidadeComecouRecentemente)
+    print(porcentagemVeFazTempo)
+    print(quantidadeVeFazTempo)
+
     dadosGrafico1_x = dias
     dadosGrafico1_y = quantidade_ocorrencias
     dadosGrafico2 = ocorrencias_patologias
@@ -177,11 +200,105 @@ def viewSetores(request, idSetor):
         'qtd_registros_dia_mais_ocorrencias_setor':qtd_registros_dia_mais_ocorrencias_setor,
         'tipo_patologia_maior_ocorrencia': tipo_patologia_maior_ocorrencia,
         'n_ocorr_patologia_maior_ocorrencia': n_ocorr_patologia_maior_ocorrencia,
+        'porcentagemPrimeiraVezViu':porcentagemPrimeiraVezViu,
+        'quantidadePrimeiraVezViu':quantidadePrimeiraVezViu,
+        'porcentagemComecouRecentemente':porcentagemComecouRecentemente,
+        'quantidadeComecouRecentemente':quantidadeComecouRecentemente,
+        'porcentagemVeFazTempo':porcentagemVeFazTempo,
+        'quantidadeVeFazTempo':quantidadeVeFazTempo,
         'dadosGrafico1_x': dadosGrafico1_x,
         'dadosGrafico1_y': dadosGrafico1_y,
         'dadosGrafico2': dadosGrafico2
     }
 
     return render(request, 'setor.html', context=contexto)
+
+
+def viewPatologias(request, idPatologia):
+    global lista_nomes_patologias
+    nomePatologia = lista_nomes_patologias[idPatologia]
+
+    nomesPatologiasComID = []
+    for i in range(0, len(lista_nomes_patologias)):
+        nomesPatologiasComID.append([i, lista_nomes_patologias[i]])
+
+    caminho_pasta = os.path.dirname(__file__)
+    dados_csv = os.path.join(caminho_pasta, 'dados_ocorrencias.csv')
+    df = pd.read_csv(dados_csv)
+
+    df.rename(columns={'Nome do Setor': 'NomeDoSetor', "É urgente?":"Urgente", "Tempo que vê a patologia":"TempoQueVe"}, inplace=True)
+    condicao = "Patologia == "+str(idPatologia)
+    df = df.query(condicao)
+
+    n_total_ocorrencias = df.shape[0]
+    print(n_total_ocorrencias)
+
+    setor_mais_ocorrencias = df.groupby(["NomeDoSetor"])["NomeDoSetor"].count().reset_index(name="Quantidade de Registros").sort_values(by="Quantidade de Registros", ascending=False)
+    nome_setor_mais_ocorrencias = setor_mais_ocorrencias.iloc[0]["NomeDoSetor"]
+    n_ocorr_setor_mais_ocorrencias = setor_mais_ocorrencias.iloc[0]["Quantidade de Registros"]
+    
+    quantidadeUrgentes = int(df.query("Urgente == 1").shape[0])
+    porcentagemUrgencia = math.floor((quantidadeUrgentes/int(n_total_ocorrencias)) * 100)
+
+    dias_ocorrencias_patologia = df.groupby("Data do Registro")["Data do Registro"].count().reset_index(name="Quantidade de Registros").sort_values(by="Quantidade de Registros", ascending=False)
+    dia_mais_ocorrencias_patologia = dias_ocorrencias_patologia.iloc[0]["Data do Registro"]
+    qtd_registros_dia_mais_ocorrencias_patologia = dias_ocorrencias_patologia.iloc[0]["Quantidade de Registros"]
+
+    porcentagemPrimeiraVezViu = int(df.query("TempoQueVe == 0").shape[0])
+    porcentagemPrimeiraVezViu = math.floor((porcentagemPrimeiraVezViu/int(n_total_ocorrencias)) * 100)
+    quantidadePrimeiraVezViu = int(df.query("TempoQueVe == 0").shape[0])
+    
+    porcentagemComecouRecentemente = int(df.query("TempoQueVe == 1").shape[0])
+    porcentagemComecouRecentemente = math.floor((porcentagemComecouRecentemente/int(n_total_ocorrencias)) * 100)
+    quantidadeComecouRecentemente = int(df.query("TempoQueVe == 1").shape[0])
+
+    porcentagemVeFazTempo = int(df.query("TempoQueVe == 2").shape[0])
+    porcentagemVeFazTempo = math.floor((porcentagemVeFazTempo/int(n_total_ocorrencias)) * 100)
+    quantidadeVeFazTempo = int(df.query("TempoQueVe == 2").shape[0])
+
+    global lista_cores_tipos_patologias
+    setores_ocorrencia = df.groupby(["NomeDoSetor"])["NomeDoSetor"].count().reset_index(name="Quantidade de Registros")
+    dadosGrafico2 = []
+    for i in range(0,len(setores_ocorrencia)):
+        dadosGrafico2.append([setor_mais_ocorrencias.iloc[i]["NomeDoSetor"], setor_mais_ocorrencias.iloc[i]["Quantidade de Registros"], lista_cores_tipos_patologias[i%8]])
+
+    ocorrencias_patologias = df.groupby(["Patologia"])["Patologia"].count().reset_index(name="Quantidade de Registros").sort_values(by="Quantidade de Registros", ascending=False)
+    tipo_patologia_maior_ocorrencia = lista_nomes_patologias[int(ocorrencias_patologias.iloc[0]["Patologia"])]
+    n_ocorr_patologia_maior_ocorrencia = ocorrencias_patologias.iloc[0]["Quantidade de Registros"]
+
+    ocorrencias_patologias = ocorrencias_patologias.values.tolist()
+    for patologia in ocorrencias_patologias:
+        patologia.append(lista_cores_tipos_patologias[int(patologia[0])])
+        patologia[0] =  lista_nomes_patologias[int(patologia[0])]
+
+    ocorrencias_por_dia = df.groupby("Data do Registro")["Data do Registro"].count().reset_index(name="Quantidade de Registros")
+    ocorrencias_por_dia["Data do Registro Formatada"] = pd.to_datetime(ocorrencias_por_dia["Data do Registro"], format="%d/%m/%Y")
+    ocorrencias_por_dia.sort_values(by="Data do Registro Formatada", inplace = True)
+    dias = ocorrencias_por_dia["Data do Registro"].tolist()
+    quantidade_ocorrencias = ocorrencias_por_dia["Quantidade de Registros"].tolist()    
+ 
+    dadosGrafico1_x = dias
+    dadosGrafico1_y = quantidade_ocorrencias
+
+    contexto = {
+        'nomePatologia': nomePatologia,
+        'patologias': nomesPatologiasComID,
+        'n_total_ocorrencias':n_total_ocorrencias,
+        'porcentagemUrgencia': porcentagemUrgencia,
+        'dia_mais_ocorrencias_patologia': dia_mais_ocorrencias_patologia,
+        'qtd_registros_dia_mais_ocorrencias_patologia': qtd_registros_dia_mais_ocorrencias_patologia,
+        'setor_mais_ocorrencias':nome_setor_mais_ocorrencias,
+        'n_ocorr_setor_mais_ocorrencias':n_ocorr_setor_mais_ocorrencias,
+        'porcentagemPrimeiraVezViu':porcentagemPrimeiraVezViu,
+        'quantidadePrimeiraVezViu':quantidadePrimeiraVezViu,
+        'porcentagemComecouRecentemente':porcentagemComecouRecentemente,
+        'quantidadeComecouRecentemente':quantidadeComecouRecentemente,
+        'porcentagemVeFazTempo':porcentagemVeFazTempo,
+        'quantidadeVeFazTempo':quantidadeVeFazTempo,
+        'dadosGrafico1_x':dias,
+        'dadosGrafico1_y':quantidade_ocorrencias,
+        'dadosGrafico2': dadosGrafico2
+    }
+    return render(request, 'patologia.html', context=contexto)
 
     
