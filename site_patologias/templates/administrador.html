@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block conteudo %}
+<div class="container">
+    <div class="d-flex justify-content-center align-items-center flex-column">
+        <table class="table table-bordered table-striped table-hover table-sm justify-content-center" style="width:90%;max-width:90%;background-color: whitesmoke;margin-top:1%;">
+            <caption>Ocorrências Registradas no Sistema</caption>
+            <thead>
+                <tr>
+                    <th class="text-center" style="width: 3%">
+                        Índice
+                    </th>
+                    <th class="text-center" style="width: 3%">
+                        Nome do Administrador
+                    </th>
+                    <th class="text-center" style="width: 3%">
+                        E-mail do Administrador
+                    </th>
+                    <th class="text-center" style="width: 3%">
+                        Alterar Senha?
+                    </th>
+                    <th class="text-center" style="width: 3%">
+                        Excluir Administrador?
+                    </th>
+                </tr>
+            </thead>
+            <tbody id="tabela-ocorrencias">
+                <tr id="registro-0">
+                    <td class="text-center" data="0">
+                        1
+                    </td>
+                    <td class="text-center" data="0">
+                        Gabriel Vieira Cardoso
+                    </td>
+                    <td class="text-center" data="0">
+                        12191000380@muz.ifsuldeminas.edu.br
+                    </td>
+                    <td class="text-center" data="0">
+                        <button class="btn btn-warning">
+                            <i class="bi bi-pencil-fill"></i>
+                        </button>
+                    </td>
+                    <td class="text-center" data="0">
+                        <button class="btn btn-danger">
+                            <i class="bi bi-trash-fill"></i>
+                        </button>
+                    </td>
+                </tr>
+                <tr id="registro-0">
+                    <td class="text-center" data="0">
+                        2
+                    </td>
+                    <td class="text-center" data="0">
+                        Administrador 2
+                    </td>
+                    <td class="text-center" data="0">
+                        teste@email.com
+                    </td>
+                    <td class="text-center" data="0">
+                        <button class="btn btn-warning">
+                            <i class="bi bi-pencil-fill"></i>
+                        </button>
+                    </td>
+                    <td class="text-center" data="0">
+                        <button class="btn btn-danger">
+                            <i class="bi bi-trash-fill"></i>
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock conteudo %}

@@ -183,6 +183,14 @@
       type: 'bar',
       data: data2,
       options: {
+        scales: {
+            y: {
+                min: 0,
+                ticks: {
+                    stepSize: 1
+                }
+            }
+        },
         responsive: true,
         maintainAspectRatio: false
       }

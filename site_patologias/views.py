@@ -22,6 +22,9 @@ setores = ['Alojamento Masculino Bloco B', 'Hospital Veterinário', 'Prefeitura 
 def viewLogin(request):
     return render(request, 'login.html')
 
+def viewTabelaAdministradores(request):
+    return render(request, 'administrador.html')
+
 def viewHome(request):
     caminho_pasta = os.path.dirname(__file__)
     dados_csv = os.path.join(caminho_pasta, 'dados_ocorrencias.csv')
