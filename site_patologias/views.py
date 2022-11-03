@@ -19,17 +19,35 @@ lista_cores_tipos_patologias = ["#003f5c","#2f4b7c", "#665191", "#a05195", "#d45
 
 setores = ['Alojamento Masculino Bloco B', 'Hospital Veterinário', 'Prefeitura e Estacionamento', 'Canil', 'Granja de Frango de Corte']
 
-
 # Views
 def viewLogin(request):
     return render(request, 'login.html')
 
-def viewTabelaAdministradores(request):
+def validaLogin(request):
+    if not request.POST:
+        return viewLogin(request, 'login.html')
+
+    email = request.POST["email"]
+    senha = sha256(request.POST["senha"].encode('ascii')).hexdigest()
+    admins = Admin.objects.all()
+    for admin in admins:
+        if admin.email == email and admin.senha == senha:
+            request.session["usuario-autenticado"] = True
+            return viewHome(request)
+    return viewLogin(request, 'login.html')
+
+def viewTabelaAdministradores(request, erro=None):
+    mensagemErro = None
+    if erro == 'erroCadastro':
+        mensagemErro = "Houve um erro ao cadastrar o novo administrador! Por favor, atente às informações no formulário de cadastro e tente novamente."
+    elif erro == 'erroExclusão':
+        mensagemErro = "Erro ao excluir o usuário! Por favor, tente novamente!" 
     admins = Admin.objects.all()
     form = CadastraAdminForm()
     contexto = {
         'admins':admins,
-        'form':form
+        'form':form,
+        'mensagemErro':mensagemErro
     }
     return render(request, 'administrador.html', context=contexto)
 
@@ -43,13 +61,14 @@ def cadastraAdmin(request):
     admins = Admin.objects.all()
     for admin in admins:
         if admin.nome == novoAdmin.nome or admin.email == novoAdmin.email:
-            print("ERRO!")
-            return viewTabelaAdministradores(request)
+            return viewTabelaAdministradores(request, 'erroCadastro')
     novoAdmin.save()
     return viewTabelaAdministradores(request)
 
-def deletaAdmin(request, id):
-    admin = Admin.objects.get(id=id)
+def deletaAdmin(request):
+    if not request.POST or request.POST["id"] == "#":
+        return viewTabelaAdministradores(request, 'erroExclusao')
+    admin = Admin.objects.get(id=int(request.POST["id"]))
     admin.delete()
     return viewTabelaAdministradores(request)
 
@@ -98,8 +117,6 @@ def viewHome(request):
     mediana_ocorrencias_por_dia = float(ocorrencias_por_dia["Quantidade de Registros"].median().round(1))
     moda_ocorrencias_por_dia = float(ocorrencias_por_dia["Quantidade de Registros"].mode().round(1))
 
-    
-
     contexto = {
         'n_total_ocorrencias':n_total_ocorrencias,
         'setor_mais_ocorrencias':nome_setor_mais_ocorrencias,
@@ -119,6 +136,8 @@ def viewHome(request):
     return render(request, 'home.html', context=contexto)
 
 def viewTabelaOcorrencias(request):
+    #if request.session["usuario-autenticado"] != True:
+        #return viewLogin(request)
     caminho_pasta = os.path.dirname(__file__)
     dados_csv = os.path.join(caminho_pasta, 'dados_ocorrencias.csv')
     df = pd.read_csv(dados_csv)

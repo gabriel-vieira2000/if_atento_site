@@ -2,6 +2,15 @@
 
 {% block conteudo %}
 <div class="container">
+    {% if mensagemErro %}
+        <div class="row">
+            <div class="col-12 p-2">
+                <div class="alert alert-danger">
+                    <h6>{{mensagemErro}}</h6>
+                </div>
+            </div>
+        </div>
+    {% endif %}
     <div class="row">
         <div class="col-8">
         </div>
@@ -71,7 +80,7 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form action="../cadastro/admin" method="POST" class="form-control">
+        <form action="../cadastro/admin" method="POST" class="p-2">
           {% csrf_token %}
           <div class="row">
             <div class="form-group p-1">
@@ -123,7 +132,11 @@
           </div>
       </div>
       <div class="modal-footer">
-        <a class="btn btn-danger" id="botaoConfirmaExcluir" href="#">Excluir</a>
+        <form action="../exclusao/admin" method="POST">
+            {% csrf_token %}
+            <input type="number" name="id" id="inputIdAdminExclusao" style="display:none;" value="#" />
+            <button class="btn btn-danger" id="botaoConfirmaExcluir" type="submit">Excluir</a>
+        </form>
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Voltar</button>        
       </div>
     </div>
@@ -135,7 +148,7 @@
         tabela = document.getElementById("tabela-admins");
         for (let i=0; i<tabela.children.length; i++){
             document.getElementById("textoModalExcluir").innerHTML = "<p><b>Tem certeza que deseja excluir o administrador:</b> " + tabela.children[i].children[1].getAttribute("data") + " (" + tabela.children[i].children[2].getAttribute("data") + ")?</p>";
-            document.getElementById("botaoConfirmaExcluir").href = `/admin/deleta/${id}`
+            document.getElementById("inputIdAdminExclusao").setAttribute("value", tabela.children[i].children[0].getAttribute("data"));
         }
         document.getElementById("botaoModalExcluir").click();
     }
