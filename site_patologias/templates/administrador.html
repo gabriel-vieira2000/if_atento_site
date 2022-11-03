@@ -2,9 +2,18 @@
 
 {% block conteudo %}
 <div class="container">
+    <div class="row">
+        <div class="col-8">
+        </div>
+        <div class="col-4">
+            <button class="btn btn-success mt-2" type="button" id="botaoModalCadastrar" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCadastrar">
+                Criar novo Administrador
+            </button>
+        </div>
+    </div>
     <div class="d-flex justify-content-center align-items-center flex-column">
         <table class="table table-bordered table-striped table-hover table-sm justify-content-center" style="width:90%;max-width:90%;background-color: whitesmoke;margin-top:1%;">
-            <caption>Ocorrências Registradas no Sistema</caption>
+            <caption>Administradores Presentes no Sistema</caption>
             <thead>
                 <tr>
                     <th class="text-center" style="width: 3%">
@@ -17,59 +26,127 @@
                         E-mail do Administrador
                     </th>
                     <th class="text-center" style="width: 3%">
-                        Alterar Senha?
+                        Alterar Dados?
                     </th>
                     <th class="text-center" style="width: 3%">
                         Excluir Administrador?
                     </th>
                 </tr>
             </thead>
-            <tbody id="tabela-ocorrencias">
+            <tbody id="tabela-admins">
                 <tr id="registro-0">
-                    <td class="text-center" data="0">
-                        1
-                    </td>
-                    <td class="text-center" data="0">
-                        Gabriel Vieira Cardoso
-                    </td>
-                    <td class="text-center" data="0">
-                        12191000380@muz.ifsuldeminas.edu.br
-                    </td>
-                    <td class="text-center" data="0">
-                        <button class="btn btn-warning">
-                            <i class="bi bi-pencil-fill"></i>
-                        </button>
-                    </td>
-                    <td class="text-center" data="0">
-                        <button class="btn btn-danger">
-                            <i class="bi bi-trash-fill"></i>
-                        </button>
-                    </td>
-                </tr>
-                <tr id="registro-0">
-                    <td class="text-center" data="0">
-                        2
-                    </td>
-                    <td class="text-center" data="0">
-                        Administrador 2
-                    </td>
-                    <td class="text-center" data="0">
-                        teste@email.com
-                    </td>
-                    <td class="text-center" data="0">
-                        <button class="btn btn-warning">
-                            <i class="bi bi-pencil-fill"></i>
-                        </button>
-                    </td>
-                    <td class="text-center" data="0">
-                        <button class="btn btn-danger">
-                            <i class="bi bi-trash-fill"></i>
-                        </button>
-                    </td>
+                    {% for admin in admins %}
+                        <td class="text-center" data="{{admin.id}}">
+                                <p>{{admin.id}}</p>
+                        </td>
+                        <td class="text-center" data="{{admin.nome}}">                      
+                                <p>{{admin.nome}}</p>
+                        </td>
+                        <td class="text-center" data="{{admin.email}}">
+                                {{admin.email}}
+                        </td>
+                        <td class="text-center">
+                            <button class="btn btn-warning">
+                                <i class="bi bi-pencil-fill"></i>
+                            </button>
+                        </td>
+                        <td class="text-center" data="0">
+                            <button class="btn btn-danger" onclick="excluirAdmin({{admin.id}}, '{{admin.nome}}');">
+                                <i class="bi bi-trash-fill"></i>
+                            </button>
+                        </td>
+                    {% endfor %}
                 </tr>
             </tbody>
         </table>
     </div>
 </div>
+
+<button type="button" id="botaoModalCadastrar" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalCadastrar" style="display:none;"></button>
+<div class="modal fade" id="modalCadastrar" tabindex="-1" aria-labelledby="tituloModal" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header bg-success">
+        <h5 class="modal-title text-white" id="tituloModal">Informe os dados abaixo para cadastrar um novo usuário:</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="../cadastro/admin" method="POST" class="form-control">
+          {% csrf_token %}
+          <div class="row">
+            <div class="form-group p-1">
+                <label for="inputNome">Nome Completo do Administrador: </label>
+                <input type="text" name="nome" class="form-control" id="inputNome" placeholder="Insira o nome completo do Administrador">
+                <small id="ajudaNome" class="form-text text-muted">Seu nome deve ser único.</small>
+            </div>
+          </div>
+          <div class="row">
+            <div class="form-group p-1">
+                <label for="inputEmail">E-mail do Administrador: </label>
+                <input type="email" name="email" class="form-control" id="inputEmail" placeholder="Insira o e-mail aqui ">
+                <small id="ajudaEmail" class="form-text text-muted">Seu e-mail também deve ser único.</small>
+            </div>
+          </div>
+          <div class="row">
+            <div class="form-group p-1">
+                <label for="inputSenha">Senha do Administrador: </label>
+                <div class="input-group mb-2">
+                    <input type="password" name="senha" class="form-control" id="inputSenha" placeholder="Insira a senha aqui ">
+                    <div class="input-group-pospend">
+                        <div class="input-group-text" id="ocultaSenha"><i class="bi bi-eye-fill"></i></div>
+                    </div>
+                </div>
+                <small id="ajudaSenha" class="form-text text-muted">Caso queira revelar ou ocultar a senha clique no ícone <i class="bi bi-eye-fill"></i> ao lado.</small>
+            </div>
+          </div>
+      </div>
+      <div class="modal-footer">
+            <button class="btn btn-success" id="botaoCadastraAdministrador" type="submit">Cadastrar</a>
+        </form>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Voltar</button>        
+      </div>
+    </div>
+  </div>
+</div>
+
+<button type="button" id="botaoModalExcluir" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalExcluir" style="display:none;"></button>
+<div class="modal fade" id="modalExcluir" tabindex="-1" aria-labelledby="tituloModal" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header bg-danger">
+        <h5 class="modal-title text-white" id="tituloModal">Cuidado! Você irá excluir esse administrador!</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+          <div class="row">
+              <h5 id="textoModalExcluir"></h5>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-danger" id="botaoConfirmaExcluir" href="#">Excluir</a>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Voltar</button>        
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+    function excluirAdmin(id, nome){
+        tabela = document.getElementById("tabela-admins");
+        for (let i=0; i<tabela.children.length; i++){
+            document.getElementById("textoModalExcluir").innerHTML = "<p><b>Tem certeza que deseja excluir o administrador:</b> " + tabela.children[i].children[1].getAttribute("data") + " (" + tabela.children[i].children[2].getAttribute("data") + ")?</p>";
+            document.getElementById("botaoConfirmaExcluir").href = `/admin/deleta/${id}`
+        }
+        document.getElementById("botaoModalExcluir").click();
+    }
+
+    document.getElementById("ocultaSenha").addEventListener('click', () => {
+        if(document.getElementById("inputSenha").getAttribute("type") == 'password'){
+            document.getElementById("inputSenha").setAttribute("type", 'text');
+        }else{
+            document.getElementById("inputSenha").setAttribute("type", 'password');
+        }
+    });
+</script>
 
 {% endblock conteudo %}

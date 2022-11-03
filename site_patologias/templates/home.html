@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
 
 {% block conteudo %}
-
 <div class="container">
     <div class="row">
         <div class="col">
@@ -95,14 +94,14 @@
             </div>
     </div>
     <div class="row">
-        <div class="col-4">
+        <div class="col-3">
             <div class="container p-2">
                 <div class="card shadow">
                     <div class="card-header">
-                        <p class="card-text">Desvio Padrão (Registros por dia) </p>
+                        <p class="card-text">Desvio Padrão</p>
                     </div>
                     <div class="card-body">
-                        <div class="card-text">{{desvio_padrao_ocorrencias_por_dia}}</div>
+                        <div class="card-text">{{desvio_padrao_ocorrencias_por_dia}} nos dias de registro</div>
                     </div>
                 </div>
             </div>
@@ -119,7 +118,32 @@
                 </div>
             </div>
         </div>
+        <div class="col-3">
+            <div class="container p-2">
+                <div class="card shadow">
+                    <div class="card-header">
+                        <p class="card-text">Moda das Ocorrências</p>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-text">{{moda_ocorrencias_por_dia}} por dia</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="container p-2">
+                <div class="card shadow">
+                    <div class="card-header">
+                        <p class="card-text">Mediana das Ocorrências</p>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-text">{{mediana_ocorrencias_por_dia}} por dia</div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+</div>
 </div>
 
 <script>

@@ -7,8 +7,10 @@ import requests
 from dotenv import load_dotenv
 import os 
 import math
+from hashlib import sha256
 
-from .utils import geraGrafico
+from .models import Admin
+from .forms import CadastraAdminForm
 
 load_dotenv()
 
@@ -23,7 +25,33 @@ def viewLogin(request):
     return render(request, 'login.html')
 
 def viewTabelaAdministradores(request):
-    return render(request, 'administrador.html')
+    admins = Admin.objects.all()
+    form = CadastraAdminForm()
+    contexto = {
+        'admins':admins,
+        'form':form
+    }
+    return render(request, 'administrador.html', context=contexto)
+
+def cadastraAdmin(request):
+    if not request.POST:
+        return viewTabelaAdministradores(request)
+    nomeAdmin = request.POST["nome"]
+    emailAdmin = request.POST["email"]
+    senhaAdmin = sha256(request.POST["senha"].encode('ascii')).hexdigest()
+    novoAdmin = Admin(nome=nomeAdmin, email=emailAdmin, senha=senhaAdmin)
+    admins = Admin.objects.all()
+    for admin in admins:
+        if admin.nome == novoAdmin.nome or admin.email == novoAdmin.email:
+            print("ERRO!")
+            return viewTabelaAdministradores(request)
+    novoAdmin.save()
+    return viewTabelaAdministradores(request)
+
+def deletaAdmin(request, id):
+    admin = Admin.objects.get(id=id)
+    admin.delete()
+    return viewTabelaAdministradores(request)
 
 def viewHome(request):
     caminho_pasta = os.path.dirname(__file__)
@@ -66,7 +94,10 @@ def viewHome(request):
     dadosGrafico2 = ocorrencias_patologias
 
     desvio_padrao_ocorrencias_por_dia = ocorrencias_por_dia["Quantidade de Registros"].std().round(2)
-    media_ocorrencias_por_dia = float(ocorrencias_por_dia.mean().round(1))
+    media_ocorrencias_por_dia = float(ocorrencias_por_dia["Quantidade de Registros"].mean().round(1))
+    mediana_ocorrencias_por_dia = float(ocorrencias_por_dia["Quantidade de Registros"].median().round(1))
+    moda_ocorrencias_por_dia = float(ocorrencias_por_dia["Quantidade de Registros"].mode().round(1))
+
     
 
     contexto = {
@@ -80,7 +111,9 @@ def viewHome(request):
         'dadosGrafico1_y':dadosGrafico1_y,
         'dadosGrafico2':dadosGrafico2,
         'desvio_padrao_ocorrencias_por_dia': desvio_padrao_ocorrencias_por_dia,
-        'media_ocorrencias_por_dia':media_ocorrencias_por_dia
+        'media_ocorrencias_por_dia':media_ocorrencias_por_dia,
+        'mediana_ocorrencias_por_dia':mediana_ocorrencias_por_dia,
+        'moda_ocorrencias_por_dia':moda_ocorrencias_por_dia
     }
 
     return render(request, 'home.html', context=contexto)
