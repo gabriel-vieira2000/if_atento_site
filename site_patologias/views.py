@@ -25,7 +25,7 @@ def viewLogin(request):
 
 def validaLogin(request):
     if not request.POST:
-        return viewLogin(request, 'login.html')
+        return viewLogin(request)
 
     email = request.POST["email"]
     senha = sha256(request.POST["senha"].encode('ascii')).hexdigest()
@@ -33,10 +33,20 @@ def validaLogin(request):
     for admin in admins:
         if admin.email == email and admin.senha == senha:
             request.session["usuario-autenticado"] = True
+            print(request.session["usuario-autenticado"])
             return viewHome(request)
-    return viewLogin(request, 'login.html')
+    return viewLogin(request)
+
+def logout(request):
+    if request.session.get("usuario-autenticado", None) == True:
+        del request.session["usuario-autenticado"]
+    return viewLogin(request)
+
 
 def viewTabelaAdministradores(request, erro=None):
+    if request.session.get("usuario-autenticado", None) != True:
+        return viewLogin(request)
+
     mensagemErro = None
     if erro == 'erroCadastro':
         mensagemErro = "Houve um erro ao cadastrar o novo administrador! Por favor, atente às informações no formulário de cadastro e tente novamente."
@@ -73,6 +83,9 @@ def deletaAdmin(request):
     return viewTabelaAdministradores(request)
 
 def viewHome(request):
+    if request.session.get("usuario-autenticado", None) != True:
+        return viewLogin(request)
+
     caminho_pasta = os.path.dirname(__file__)
     dados_csv = os.path.join(caminho_pasta, 'dados_ocorrencias.csv')
     df = pd.read_csv(dados_csv)
@@ -136,8 +149,11 @@ def viewHome(request):
     return render(request, 'home.html', context=contexto)
 
 def viewTabelaOcorrencias(request):
-    #if request.session["usuario-autenticado"] != True:
-        #return viewLogin(request)
+    if request.session.get("usuario-autenticado", None) != True:
+        return viewLogin(request)
+
+    if request.session.get("usuario-autenticado", None) != True:
+        return viewLogin(request)
     caminho_pasta = os.path.dirname(__file__)
     dados_csv = os.path.join(caminho_pasta, 'dados_ocorrencias.csv')
     df = pd.read_csv(dados_csv)
@@ -174,6 +190,9 @@ def atualizaDadosCSV(request):
     return viewTabelaOcorrencias(request)
 
 def viewSetores(request, idSetor):
+    if request.session.get("usuario-autenticado", None) != True:
+        return viewLogin(request)
+
     print(idSetor)
     print(setores[idSetor-1])
 
@@ -270,6 +289,9 @@ def viewSetores(request, idSetor):
 
 
 def viewPatologias(request, idPatologia):
+    if request.session.get("usuario-autenticado", None) != True:
+        return viewLogin(request)
+    
     global lista_nomes_patologias
     nomePatologia = lista_nomes_patologias[idPatologia]
 

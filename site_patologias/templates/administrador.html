@@ -43,8 +43,8 @@
                 </tr>
             </thead>
             <tbody id="tabela-admins">
-                <tr id="registro-0">
-                    {% for admin in admins %}
+                {% for admin in admins %}
+                <tr id="registro-{{admin.id}}">
                         <td class="text-center" data="{{admin.id}}">
                                 <p>{{admin.id}}</p>
                         </td>
@@ -64,8 +64,8 @@
                                 <i class="bi bi-trash-fill"></i>
                             </button>
                         </td>
+                    </tr>
                     {% endfor %}
-                </tr>
             </tbody>
         </table>
     </div>

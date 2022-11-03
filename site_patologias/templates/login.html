@@ -24,19 +24,20 @@
                         Erro ao acessar! Os dados informados são inválidos! Por favor, tente novamente.
                     </div>
                 </div>
-                <form>
+                <form action="../validaLogin/" method="POST">
+                    {% csrf_token %}
                     <div class="form-outline mb-4">
-                        <label class="form-label" for="form2Example1">Informe o seu E-mail:</label>
-                        <input type="email" id="form2Example1" class="form-control" placeholder="Insira o seu e-mail aqui (ex. jose@gmail.com)"/>
+                        <label class="form-label" for="inputEmail">Informe o seu E-mail:</label>
+                        <input type="email" name="email" id="inputEmail" class="form-control" placeholder="Insira o seu e-mail aqui (ex. jose@gmail.com)"/>
                     </div>
                 
                     <div class="form-outline mb-4">
-                        <label class="form-label" for="form2Example2">Informe a sua Senha:</label>
-                        <input type="password" id="form2Example2" class="form-control" placeholder="Insira a sua senha aqui"/>
+                        <label class="form-label" for="inputSenha">Informe a sua Senha:</label>
+                        <input type="password" name="senha" id="inputSenha" class="form-control" placeholder="Insira a sua senha aqui"/>
                     </div>
             
                     <div class="text-center">
-                        <button type="button" class="btn btn-success btn-block mb-4" style="width:250px;">ACESSAR</button>
+                        <button type="submit" class="btn btn-success btn-block mb-4" style="width:250px;">ACESSAR</button>
                     </div>
 
                     <div class="text-center">
