@@ -44,8 +44,8 @@ def logout(request):
 
 
 def viewTabelaAdministradores(request, erro=None):
-    if request.session.get("usuario-autenticado", None) != True:
-        return viewLogin(request)
+    #if request.session.get("usuario-autenticado", None) != True:
+        #return viewLogin(request)
 
     mensagemErro = None
     if erro == 'erroCadastro':
