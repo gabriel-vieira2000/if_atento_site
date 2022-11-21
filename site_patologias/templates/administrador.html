@@ -55,12 +55,12 @@
                                 {{admin.email}}
                         </td>
                         <td class="text-center">
-                            <button class="btn btn-warning">
+                            <button class="btn btn-warning" onclick="alteraAdmin({{admin.id}}, '{{admin.nome}}', '{{admin.email}}');">
                                 <i class="bi bi-pencil-fill"></i>
                             </button>
                         </td>
                         <td class="text-center" data="0">
-                            <button class="btn btn-danger" onclick="excluirAdmin({{admin.id}}, '{{admin.nome}}');">
+                            <button class="btn btn-danger" onclick="excluirAdmin({{admin.id}}, '{{admin.nome}}', '{{admin.email}}');">
                                 <i class="bi bi-trash-fill"></i>
                             </button>
                         </td>
@@ -92,7 +92,7 @@
           <div class="row">
             <div class="form-group p-1">
                 <label for="inputEmail">E-mail do Administrador: </label>
-                <input type="email" name="email" class="form-control" id="inputEmail" placeholder="Insira o e-mail aqui ">
+                <input type="email" name="email" class="form-control" id="inputEmail" placeholder="Insira o e-mail aqui">
                 <small id="ajudaEmail" class="form-text text-muted">Seu e-mail também deve ser único.</small>
             </div>
           </div>
@@ -100,7 +100,7 @@
             <div class="form-group p-1">
                 <label for="inputSenha">Senha do Administrador: </label>
                 <div class="input-group mb-2">
-                    <input type="password" name="senha" class="form-control" id="inputSenha" placeholder="Insira a senha aqui ">
+                    <input type="password" name="senha" class="form-control" id="inputSenha" placeholder="Insira a senha aqui">
                     <div class="input-group-pospend">
                         <div class="input-group-text" id="ocultaSenha"><i class="bi bi-eye-fill"></i></div>
                     </div>
@@ -111,6 +111,59 @@
       </div>
       <div class="modal-footer">
             <button class="btn btn-success" id="botaoCadastraAdministrador" type="submit">Cadastrar</a>
+        </form>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Voltar</button>        
+      </div>
+    </div>
+  </div>
+</div>
+
+<button type="button" id="botaoModalAlterar" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#modalAlterar" style="display:none;"></button>
+<div class="modal fade" id="modalAlterar" tabindex="-1" aria-labelledby="tituloModal" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header bg-warning">
+        <h5 class="modal-title text-white" id="tituloModal">Altere ou informe os novos dados do Administrador:</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+            <p id="dadosAdministradorAlteracao"></p>
+        </div>
+        <form action="../alteracao/admin" method="POST" class="p-2">
+          {% csrf_token %}
+          <input type="number" name="id" id="inputIdAdminAlteracao" value="-1" style="display:none;"/>
+          <div class="row">
+            <div class="form-group p-1">
+                <label for="inputNomeAlterar">Nome Completo do Administrador: </label>
+                <input type="text" name="nome" class="form-control" id="inputNomeAlterar" placeholder="Insira o nome completo do Administrador">
+                <small id="ajudaNome" class="form-text text-muted">Seu nome deve ser único.</small>
+            </div>
+          </div>
+          <div class="row">
+            <div class="form-group p-1">
+                <label for="inputEmailAlterar">E-mail do Administrador: </label>
+                <input type="email" name="email" class="form-control" id="inputEmailAlterar" placeholder="Insira o e-mail aqui ">
+                <small id="ajudaEmail" class="form-text text-muted">Seu e-mail também deve ser único.</small>
+            </div>
+          </div>
+          <div class="row">
+            <div class="form-group p-1">
+                <label for="inputSenhaAlterar">Senha do Administrador: </label>
+                <div class="input-group mb-2">
+                    <input type="password" name="senha" class="form-control" id="inputSenhaAlterar" placeholder="Insira a senha aqui ">
+                    <div class="input-group-pospend">
+                        <div class="input-group-text" id="ocultaSenha"><i class="bi bi-eye-fill"></i></div>
+                    </div>
+                </div>
+                <small id="ajudaSenha" class="form-text text-muted"><b>Para manter a senha atual basta deixar o campo acima em branco.</b></small>
+                <br>
+                <small id="ajudaSenha" class="form-text text-muted">Caso queira revelar ou ocultar a senha clique no ícone <i class="bi bi-eye-fill"></i> ao lado.</small>
+            </div>
+          </div>
+      </div>
+      <div class="modal-footer">
+            <button class="btn btn-warning" id="botaoAlteraAdministrador" type="submit">ALTERAR</a>
         </form>
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Voltar</button>        
       </div>
@@ -144,13 +197,18 @@
 </div>
 
 <script>
-    function excluirAdmin(id, nome){
-        tabela = document.getElementById("tabela-admins");
-        for (let i=0; i<tabela.children.length; i++){
-            document.getElementById("textoModalExcluir").innerHTML = "<p><b>Tem certeza que deseja excluir o administrador:</b> " + tabela.children[i].children[1].getAttribute("data") + " (" + tabela.children[i].children[2].getAttribute("data") + ")?</p>";
-            document.getElementById("inputIdAdminExclusao").setAttribute("value", tabela.children[i].children[0].getAttribute("data"));
-        }
+    function excluirAdmin(id, nome, email){
+        document.getElementById("textoModalExcluir").innerHTML = "<p><b>Tem certeza que deseja excluir o administrador:</b> " + nome + " (" + email + ")?</p>";
+        document.getElementById("inputIdAdminExclusao").setAttribute("value", id);
         document.getElementById("botaoModalExcluir").click();
+    }
+
+    function alteraAdmin(id, nome, email){
+        document.getElementById("dadosAdministradorAlteracao").innerHTML = "<p><b>Tem certeza que deseja alterar o administrador:</b> " + nome + " (" + email + ")?</p>";
+        document.getElementById("inputIdAdminAlteracao").setAttribute('value', id);
+        document.getElementById("inputNomeAlterar").setAttribute('value', nome);
+        document.getElementById("inputEmailAlterar").setAttribute('value', email);
+        document.getElementById("botaoModalAlterar").click();
     }
 
     document.getElementById("ocultaSenha").addEventListener('click', () => {

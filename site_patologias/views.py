@@ -2,7 +2,6 @@ from django.shortcuts import render
 from django.http import HttpResponse
 
 import pandas as pd
-import plotly.express as px
 import requests
 from dotenv import load_dotenv
 import os 
@@ -17,15 +16,27 @@ load_dotenv()
 lista_nomes_patologias = ["Infiltração", "Carbonatação ou Corrosão do Aço", "Deslocamento no revestimento", "Fissura ou Trincas", "Bolhas", "Vidro Quebrado", "Falta de iluminação", "Lixo ou sujeira acumulada"]
 lista_cores_tipos_patologias = ["#003f5c","#2f4b7c", "#665191", "#a05195", "#d45087","#f95d6a", "#ff7c43","#ffa600"]
 
-setores = ['Alojamento Masculino Bloco B', 'Hospital Veterinário', 'Prefeitura e Estacionamento', 'Canil', 'Granja de Frango de Corte']
+setores = ['Guarita', 'Laboratório de Cafeicultura', 'Prédio da Cafeicultura', 'Prédio da Biologia','Prédio da Veterinária','Prédio da Engenharia Agronômica',
+'Laboratório de Biotecnologia', 'Laboratório de Bromatologia e Água', 'Agroindústria', 'NIPE', 'Biblioteca', 'CEAD', 'Celin', 'Depósito IFSuldeMinas', 'Prédio da Tecnologia da Informação',
+'Refeitório', 'Cozinha', 'Setor de Infraestrutura de T.I.', 'Direção do Campus', 'Prédio H', 'Cooperativa Escola', 'Cantina', 'Setor de Jardinagem e Paisagismo', 'Laboratório de Solos', 
+'Construção Espaço Maker', 'Ginásio Poliesportivo', 'Enfermaria', 'Secretaria de Registros Acadêmicos', 'Quadra de Esportes', 'Espaço de Convivência', 'Alojamento Masculino Bloco A', 'Alojamento Masculino Bloco B',
+'Alojamento Feminino', 'PN 06', 'Setor de Assistência ao Educando', 'Museu Histórico', 'Centro de Estudos Ambientais', 'Espaço Ecumênico','Horta', 'Prefeitura e Estacionamento', 'Canil', 'Almoxarifado', 'Lavanderia',
+'Abatedouro e Fábrica de Ração', 'PROEJA', 'Horta', 'Prédio de Edificações', 'Hospital Veterinário', 'Casa dos Moradores da Z3', 'Setor de Zootecnia 3', 'Sala de Ração e Polpa de Fruta', 'Fristal', 'Granja Frango de Corte',
+'Silo', 'Casa dos Moradores Z1', 'Granja Galinha de Postura', 'Sala de Aula Z1', 'Cunicultura', 'Caprino e Ovino', 'Curral de Manejo', 'Viveiro de Muda', 'Setor de Zootecnia 2', 'CECAES']
 
 # Views
-def viewLogin(request):
+def viewLogin(request, erro=None):
+    if request.session.get("usuario-autenticado", None) == True:
+        return viewHome(request)
+
+    if erro != None:
+        mensagemErro = "Erro ao acessar! Os dados informados são inválidos! Por favor, tente novamente."
+        return render(request, 'login.html', context={'mensagemErro':mensagemErro})
     return render(request, 'login.html')
 
 def validaLogin(request):
     if not request.POST:
-        return viewLogin(request)
+        return viewLogin(request, 'erro')
 
     email = request.POST["email"]
     senha = sha256(request.POST["senha"].encode('ascii')).hexdigest()
@@ -35,7 +46,7 @@ def validaLogin(request):
             request.session["usuario-autenticado"] = True
             print(request.session["usuario-autenticado"])
             return viewHome(request)
-    return viewLogin(request)
+    return viewLogin(request, 'erro')
 
 def logout(request):
     if request.session.get("usuario-autenticado", None) == True:
@@ -44,14 +55,17 @@ def logout(request):
 
 
 def viewTabelaAdministradores(request, erro=None):
-    #if request.session.get("usuario-autenticado", None) != True:
-        #return viewLogin(request)
+    if request.session.get("usuario-autenticado", None) != True:
+        return viewLogin(request)
 
     mensagemErro = None
     if erro == 'erroCadastro':
         mensagemErro = "Houve um erro ao cadastrar o novo administrador! Por favor, atente às informações no formulário de cadastro e tente novamente."
     elif erro == 'erroExclusão':
-        mensagemErro = "Erro ao excluir o usuário! Por favor, tente novamente!" 
+        mensagemErro = "Erro ao excluir o administrador! Por favor, tente novamente!"
+    elif erro == 'erroAlteração':
+        mensagemErro = "Erro ao alterar o administrador! Provavelmente o nome ou e-mail informados já existem. Por favor, tente novamente!"
+
     admins = Admin.objects.all()
     form = CadastraAdminForm()
     contexto = {
@@ -73,6 +87,29 @@ def cadastraAdmin(request):
         if admin.nome == novoAdmin.nome or admin.email == novoAdmin.email:
             return viewTabelaAdministradores(request, 'erroCadastro')
     novoAdmin.save()
+    return viewTabelaAdministradores(request)
+
+def alteraAdmin(request):
+    if not request.POST:
+        return viewTabelaAdministradores(request)
+    idAdmin = request.POST["id"]
+    nomeAdmin = request.POST["nome"]
+    emailAdmin = request.POST["email"]
+    senhaAdmin = sha256(request.POST["senha"].encode('ascii')).hexdigest()
+    print(idAdmin)
+    print(nomeAdmin)
+    print(emailAdmin)
+    print(senhaAdmin)
+    admins = Admin.objects.all()
+    for admin in admins:
+        if admin.id != idAdmin and (admin.nome == nomeAdmin or admin.email == emailAdmin):
+            print("Dados conflitantes!")
+            return viewTabelaAdministradores(request, 'erroAlteração')
+    adminAlterar = Admin.objects.filter(id=idAdmin).first()
+    adminAlterar.nome = nomeAdmin
+    adminAlterar.email = emailAdmin
+    adminAlterar.senha = senhaAdmin
+    adminAlterar.save()
     return viewTabelaAdministradores(request)
 
 def deletaAdmin(request):
@@ -161,6 +198,8 @@ def viewTabelaOcorrencias(request):
     df["Patologia"].replace([0,1,2,3,4,5,6,7], lista_nomes_patologias, inplace=True)
     df["Tempo que vê a patologia"].replace([0,1,2], ["Primeira Vez que Vi", "Comecei a ver recentemente (< 1 ano)", "Já vejo a muito tempo? ( > 1 ano)"], inplace=True)
     df["É urgente?"].replace([0,1],['Sim', 'Não'],inplace=True)
+    df["Detalhes"].fillna("Sem detalhes", inplace=True)
+    df["Foto"].fillna("s3.amazonaws.com/", inplace=True)
     contexto = {'tabela_ocorrencias':df}
     print(df.info())
 
@@ -203,7 +242,6 @@ def viewSetores(request, idSetor):
     df.rename(columns={'Nome do Setor': 'NomeDoSetor', "É urgente?":"Urgente", "Tempo que vê a patologia":"TempoQueVe"}, inplace=True)
     condicao = "NomeDoSetor == '"+setores[idSetor-1]+"'"
     df = df.query(condicao)
-    print(df["Urgente"])
 
     nomeSetor = setores[idSetor-1]
 
@@ -214,6 +252,11 @@ def viewSetores(request, idSetor):
         id += 1
     
     n_total_ocorrencias = df.shape[0]
+
+    if n_total_ocorrencias == 0:
+        return render(request, 'setor.html', context={'setorSemRegistros':True,
+        'nomeSetor': nomeSetor,
+        'setores': setoresComID,})
 
     quantidadeUrgentes = int(df.query("Urgente == 1").shape[0])
     porcentagemUrgencia = math.floor((quantidadeUrgentes/int(n_total_ocorrencias)) * 100)
@@ -266,6 +309,7 @@ def viewSetores(request, idSetor):
     dadosGrafico2 = ocorrencias_patologias
 
     contexto = {
+        'setorSemRegistros':False,
         'nomeSetor': nomeSetor,
         'setores': setoresComID,
         'n_total_ocorrencias':n_total_ocorrencias,
@@ -309,6 +353,13 @@ def viewPatologias(request, idPatologia):
 
     n_total_ocorrencias = df.shape[0]
     print(n_total_ocorrencias)
+
+    if n_total_ocorrencias == 0:
+        return render(request, 'patologia.html', context={
+            'patologiaSemRegistros':True,
+            'nomePatologia': nomePatologia,
+            'patologias': nomesPatologiasComID,
+        })
 
     setor_mais_ocorrencias = df.groupby(["NomeDoSetor"])["NomeDoSetor"].count().reset_index(name="Quantidade de Registros").sort_values(by="Quantidade de Registros", ascending=False)
     nome_setor_mais_ocorrencias = setor_mais_ocorrencias.iloc[0]["NomeDoSetor"]
@@ -358,6 +409,7 @@ def viewPatologias(request, idPatologia):
     dadosGrafico1_y = quantidade_ocorrencias
 
     contexto = {
+        'patologiaSemRegistros':False,
         'nomePatologia': nomePatologia,
         'patologias': nomesPatologiasComID,
         'n_total_ocorrencias':n_total_ocorrencias,

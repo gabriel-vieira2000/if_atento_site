@@ -111,7 +111,12 @@
             document.getElementById("urgenciaModal").innerHTML = "<p><b>Acha Urgente:</b> " + tabela.children[i].children[4].getAttribute("data") + "</p>";
             document.getElementById("dataRegistroModal").innerHTML = "<p><b>Data do Registro:</b> " + tabela.children[i].children[6].getAttribute("data") + "</p>";
             document.getElementById("detalhesModal").innerHTML = "<p><b>Detalhes:</b> " + tabela.children[i].children[5].getAttribute("data") + "</p>";
-            document.getElementById("fotoModal").innerHTML = "<img class='img-fluid img-thumbnail' src='" + tabela.children[i].children[7].getAttribute("data") + "' />";
+            
+            if(tabela.children[i].children[7].getAttribute("data") != 's3.amazonaws.com/'){
+                document.getElementById("fotoModal").innerHTML = "<img class='img-fluid img-thumbnail' src='" + tabela.children[i].children[7].getAttribute("data") + "' />";
+            }else{
+                document.getElementById("fotoModal").innerHTML = "<h5 class='text-center'>Sem Foto</h5>";
+            }
             document.getElementById("botaoModal").click();
         });
 

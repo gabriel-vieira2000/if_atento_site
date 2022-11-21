@@ -34,104 +34,112 @@
         </div>
     </div>
     <div class="row">
-        <div class="col">
-                <div class="row">
-                    <div class="container p-2">
-                        <div class="card shadow">
-                            <div class="card-header">
-                                <p class="card-text">Nº de Ocorrências no Total</p>
-                            </div>
-                            <div class="card-body">
-                                <h4 class="card-title">{{n_total_ocorrencias}}</h3>
-                                <p class="card-text">ocorrências registradas.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="container p-2">
-                        <div class="card shadow">
-                            <div class="card-header">
-                                <p class="card-text">Porcentagem de Urgência</p>
-                            </div>
-                            <div class="card-body">
-                                <h4 class="card-title">{{porcentagemUrgencia}}% </h3>
-                                <p class="card-text">dos registros são urgentes.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="container p-2">
-                        <div class="card shadow">
-                            <div class="card-header">
-                                <p class="card-text">Tipo de Patologia com a maior ocorrência</p>
-                            </div>
-                            <div class="card-body">
-                                <h4 class="card-title">{{tipo_patologia_maior_ocorrencia}}</h3>
-                                <p class="card-text">{{n_ocorr_patologia_maior_ocorrencia}} ocorrências registradas.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="container p-2">
-                        <div class="card shadow">
-                            <div class="card-header">
-                                <p class="card-text">Dia com mais ocorrências registradas</p>
-                            </div>
-                            <div class="card-body">
-                                <h4 class="card-title">{{dia_mais_ocorrencias_setor}}</h3>
-                                <p class="card-text">{{qtd_registros_dia_mais_ocorrencias_setor}} ocorrências registradas.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="container p-2">
-                        <div class="card shadow">
-                            <div class="card-header">
-                                <p class="card-text">Há quanto tempo veem as patologias?</p>
-                            </div>
-                            <div class="card-body">
-                                <h4 class="card-title">{{porcentagemPrimeiraVezViu}}%</h3>
-                                <p class="card-text">Primeira Vez que Vi</p>
-                                <h4 class="card-title">{{porcentagemComecouRecentemente}}%</h3>
-                                <p class="card-text">Comecei a ver recentemente (<1 ano) </p>
-                                <h4 class="card-title">{{porcentagemVeFazTempo}}%</h3>
-                                <p class="card-text">Já vejo a muito tempo (>1 ano) </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-        </div>
-        <div class="col-8">
+        {% if setorSemRegistros %}
             <div class="row">
-                <div class="container p-2">
-                    <div class="card shadow">
-                        <div class="card-header">
-                            <p class="card-text">Variação das ocorrências ao longo do tempo</p>
-                        </div>
-                        <div class="card-body">
-                            <canvas id="graficoOcorrenciasPorMes" style="height:100px;"></canvas>
-                        </div>
-                    </div>
+                <div class="col">
+                    <h4 class="text-center mt-4">Setor sem Ocorrências Registradas</h4>
                 </div>
             </div>
-            <div class="row">
-                <div class="container p-2">
-                    <div class="card shadow">
-                        <div class="card-header">
-                            <p class="card-text">Porcentagem de Registros de Cada Patologia</p>
+        {% else %}
+            <div class="col">
+                    <div class="row">
+                        <div class="container p-2">
+                            <div class="card shadow">
+                                <div class="card-header">
+                                    <p class="card-text">Nº de Ocorrências no Total</p>
+                                </div>
+                                <div class="card-body">
+                                    <h4 class="card-title">{{n_total_ocorrencias}}</h3>
+                                    <p class="card-text">ocorrências registradas.</p>
+                                </div>
+                            </div>
                         </div>
-                        <div class="card-body">
-                            <div style="height:400px;">
-                                <canvas id="graficoPorcentagemPatologias"></canvas>
+                    </div>
+                    <div class="row">
+                        <div class="container p-2">
+                            <div class="card shadow">
+                                <div class="card-header">
+                                    <p class="card-text">Porcentagem de Urgência</p>
+                                </div>
+                                <div class="card-body">
+                                    <h4 class="card-title">{{porcentagemUrgencia}}% </h3>
+                                    <p class="card-text">dos registros são urgentes.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="container p-2">
+                            <div class="card shadow">
+                                <div class="card-header">
+                                    <p class="card-text">Tipo de Patologia com a maior ocorrência</p>
+                                </div>
+                                <div class="card-body">
+                                    <h4 class="card-title">{{tipo_patologia_maior_ocorrencia}}</h3>
+                                    <p class="card-text">{{n_ocorr_patologia_maior_ocorrencia}} ocorrências registradas.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="container p-2">
+                            <div class="card shadow">
+                                <div class="card-header">
+                                    <p class="card-text">Dia com mais ocorrências registradas</p>
+                                </div>
+                                <div class="card-body">
+                                    <h4 class="card-title">{{dia_mais_ocorrencias_setor}}</h3>
+                                    <p class="card-text">{{qtd_registros_dia_mais_ocorrencias_setor}} ocorrências registradas.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="container p-2">
+                            <div class="card shadow">
+                                <div class="card-header">
+                                    <p class="card-text">Há quanto tempo veem as patologias?</p>
+                                </div>
+                                <div class="card-body">
+                                    <h4 class="card-title">{{porcentagemPrimeiraVezViu}}%</h3>
+                                    <p class="card-text">Primeira Vez que Vi</p>
+                                    <h4 class="card-title">{{porcentagemComecouRecentemente}}%</h3>
+                                    <p class="card-text">Comecei a ver recentemente (<1 ano) </p>
+                                    <h4 class="card-title">{{porcentagemVeFazTempo}}%</h3>
+                                    <p class="card-text">Já vejo a muito tempo (>1 ano) </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+            <div class="col-8">
+                <div class="row">
+                    <div class="container p-2">
+                        <div class="card shadow">
+                            <div class="card-header">
+                                <p class="card-text">Variação das ocorrências ao longo do tempo</p>
+                            </div>
+                            <div class="card-body">
+                                <canvas id="graficoOcorrenciasPorMes" style="height:100px;"></canvas>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
+                <div class="row">
+                    <div class="container p-2">
+                        <div class="card shadow">
+                            <div class="card-header">
+                                <p class="card-text">Porcentagem de Registros de Cada Patologia</p>
+                            </div>
+                            <div class="card-body">
+                                <div style="height:400px;">
+                                    <canvas id="graficoPorcentagemPatologias"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
     </div>
 </div>
 
