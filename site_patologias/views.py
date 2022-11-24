@@ -53,6 +53,16 @@ def logout(request):
         del request.session["usuario-autenticado"]
     return viewLogin(request)
 
+def viewCadastroAdminPaginaInicial(request, erro=None):
+    if erro == 'erroJaExiste':
+        mensagemErro = 'Erro ao cadastrar o novo administrador! O nome ou e-mail utilizados já estão em uso, por favor altere os dados e tente novamente!'
+        return render(request, 'cadastro.html', context={'mensagemErro':mensagemErro})
+    elif erro == 'codigoAcessoErrado':
+        mensagemErro = 'Erro ao cadastrar o novo administrador! O código de acesso informado está incorreto. Tente novamente!'
+        return render(request, 'cadastro.html', context={'mensagemErro':mensagemErro})
+    
+    return render(request, 'cadastro.html')
+
 
 def viewTabelaAdministradores(request, erro=None):
     if request.session.get("usuario-autenticado", None) != True:
@@ -64,7 +74,7 @@ def viewTabelaAdministradores(request, erro=None):
     elif erro == 'erroExclusão':
         mensagemErro = "Erro ao excluir o administrador! Por favor, tente novamente!"
     elif erro == 'erroAlteração':
-        mensagemErro = "Erro ao alterar o administrador! Provavelmente o nome ou e-mail informados já existem. Por favor, tente novamente!"
+        mensagemErro = "Erro ao alterar o administrador! Provavelmente o nome ou e-mail informados já estão em uso. Por favor, tente novamente!"
 
     admins = Admin.objects.all()
     form = CadastraAdminForm()
@@ -78,16 +88,34 @@ def viewTabelaAdministradores(request, erro=None):
 def cadastraAdmin(request):
     if not request.POST:
         return viewTabelaAdministradores(request)
-    nomeAdmin = request.POST["nome"]
-    emailAdmin = request.POST["email"]
-    senhaAdmin = sha256(request.POST["senha"].encode('ascii')).hexdigest()
-    novoAdmin = Admin(nome=nomeAdmin, email=emailAdmin, senha=senhaAdmin)
-    admins = Admin.objects.all()
-    for admin in admins:
-        if admin.nome == novoAdmin.nome or admin.email == novoAdmin.email:
-            return viewTabelaAdministradores(request, 'erroCadastro')
-    novoAdmin.save()
-    return viewTabelaAdministradores(request)
+
+    print(request.POST["veioDoLogin"])
+    if request.POST["veioDoLogin"] == "1":
+        if request.POST["codigoAcesso"] != "ifatento@teste":
+            return viewCadastroAdminPaginaInicial(request, "codigoAcessoErrado")
+        nomeAdmin = request.POST["nome"]
+        emailAdmin = request.POST["email"]
+        senhaAdmin = sha256(request.POST["senha"].encode('ascii')).hexdigest()
+        novoAdmin = Admin(nome=nomeAdmin, email=emailAdmin, senha=senhaAdmin)
+        admins = Admin.objects.all()
+        for admin in admins:
+            if admin.nome == novoAdmin.nome or admin.email == novoAdmin.email:
+                return viewCadastroAdminPaginaInicial(request, "erroJaExiste")
+        novoAdmin.save()
+        request.session["usuario-autenticado"] = True
+        print(request.session["usuario-autenticado"])
+        return viewHome(request)
+    else:
+        nomeAdmin = request.POST["nome"]
+        emailAdmin = request.POST["email"]
+        senhaAdmin = sha256(request.POST["senha"].encode('ascii')).hexdigest()
+        novoAdmin = Admin(nome=nomeAdmin, email=emailAdmin, senha=senhaAdmin)
+        admins = Admin.objects.all()
+        for admin in admins:
+            if admin.nome == novoAdmin.nome or admin.email == novoAdmin.email:
+                return viewTabelaAdministradores(request, 'erroCadastro')
+        novoAdmin.save()
+        return viewTabelaAdministradores(request)
 
 def alteraAdmin(request):
     if not request.POST:
@@ -102,7 +130,8 @@ def alteraAdmin(request):
     print(senhaAdmin)
     admins = Admin.objects.all()
     for admin in admins:
-        if admin.id != idAdmin and (admin.nome == nomeAdmin or admin.email == emailAdmin):
+        print(admin.id, '- ',type(admin.id), ':', idAdmin, ' - ', type(int(idAdmin)))
+        if admin.id != int(idAdmin) and (admin.nome == nomeAdmin or admin.email == emailAdmin):
             print("Dados conflitantes!")
             return viewTabelaAdministradores(request, 'erroAlteração')
     adminAlterar = Admin.objects.filter(id=idAdmin).first()
@@ -189,18 +218,47 @@ def viewTabelaOcorrencias(request):
     if request.session.get("usuario-autenticado", None) != True:
         return viewLogin(request)
 
-    if request.session.get("usuario-autenticado", None) != True:
-        return viewLogin(request)
+    global lista_nomes_patologias
+    global setores
     caminho_pasta = os.path.dirname(__file__)
     dados_csv = os.path.join(caminho_pasta, 'dados_ocorrencias.csv')
     df = pd.read_csv(dados_csv)
     df.drop("Unnamed: 0", axis=1, inplace=True)
-    df["Patologia"].replace([0,1,2,3,4,5,6,7], lista_nomes_patologias, inplace=True)
     df["Tempo que vê a patologia"].replace([0,1,2], ["Primeira Vez que Vi", "Comecei a ver recentemente (< 1 ano)", "Já vejo a muito tempo? ( > 1 ano)"], inplace=True)
     df["É urgente?"].replace([0,1],['Sim', 'Não'],inplace=True)
+    df.replace({'Patologia':[0,1,2,3,4,5,6,7]},{'Patologia':lista_nomes_patologias}, inplace=True)
     df["Detalhes"].fillna("Sem detalhes", inplace=True)
     df["Foto"].fillna("s3.amazonaws.com/", inplace=True)
-    contexto = {'tabela_ocorrencias':df}
+
+    dfPatologias = df.groupby(["Patologia"])["Patologia"].count().reset_index(name="Quantidade de Registros").sort_values(by="Quantidade de Registros", ascending=False)
+    dfPatologias = dfPatologias.reset_index()  # make sure indexes pair with number of rows
+    id = 0
+    patologiasComID = []
+    for index, row in dfPatologias.iterrows():
+        patologiasComID.append(lista_nomes_patologias[row["Patologia"]])
+        id += 1
+
+    dfSetores = df.groupby(["Nome do Setor"])["Nome do Setor"].count().reset_index(name="Quantidade de Registros").sort_values(by="Quantidade de Registros", ascending=False)
+    df = df.reset_index()  # make sure indexes pair with number of rows
+    id = 0
+    setoresComID = []
+    for index, row in dfSetores.iterrows():
+        setoresComID.append([id, row["Nome do Setor"]])
+        id += 1
+    
+    if request.POST:
+        filtroPatologia = request.POST["filtroPatologia"]
+        filtroSetor = request.POST["filtroSetor"]
+
+        if filtroPatologia != "-1" and filtroSetor != "-1":
+            df = df.query()
+        elif filtroPatologia != "-1":
+            print("Filtro de Patologia Ativo")
+        elif filtroSetor != "-1":
+            print("Filtro de Setor Ativo")
+        
+
+    contexto = {'tabela_ocorrencias':df, 'setores':setoresComID, 'patologias':patologiasComID}
     print(df.info())
 
     return render(request, 'tabela_ocorrencias.html', context=contexto)
@@ -238,18 +296,20 @@ def viewSetores(request, idSetor):
     caminho_pasta = os.path.dirname(__file__)
     dados_csv = os.path.join(caminho_pasta, 'dados_ocorrencias.csv')
     df = pd.read_csv(dados_csv)
+    
+    dfSetores = df.groupby(["Nome do Setor"])["Nome do Setor"].count().reset_index(name="Quantidade de Registros").sort_values(by="Quantidade de Registros", ascending=False)
+    df = df.reset_index()  # make sure indexes pair with number of rows
+    id = 0
+    setoresComID = []
+    for index, row in dfSetores.iterrows():
+        setoresComID.append([id, row["Nome do Setor"]])
+        id += 1
 
     df.rename(columns={'Nome do Setor': 'NomeDoSetor', "É urgente?":"Urgente", "Tempo que vê a patologia":"TempoQueVe"}, inplace=True)
-    condicao = "NomeDoSetor == '"+setores[idSetor-1]+"'"
+    condicao = "NomeDoSetor == '"+setoresComID[idSetor][1]+"'"
     df = df.query(condicao)
 
-    nomeSetor = setores[idSetor-1]
-
-    setoresComID = []
-    id = 1
-    for setor in setores:
-        setoresComID.append([id, setor])
-        id += 1
+    nomeSetor = setoresComID[idSetor][1]
     
     n_total_ocorrencias = df.shape[0]
 
@@ -332,23 +392,37 @@ def viewSetores(request, idSetor):
     return render(request, 'setor.html', context=contexto)
 
 
-def viewPatologias(request, idPatologia):
+def viewPatologias(request, nomePatologia):
     if request.session.get("usuario-autenticado", None) != True:
         return viewLogin(request)
     
     global lista_nomes_patologias
-    nomePatologia = lista_nomes_patologias[idPatologia]
-
-    nomesPatologiasComID = []
-    for i in range(0, len(lista_nomes_patologias)):
-        nomesPatologiasComID.append([i, lista_nomes_patologias[i]])
 
     caminho_pasta = os.path.dirname(__file__)
     dados_csv = os.path.join(caminho_pasta, 'dados_ocorrencias.csv')
     df = pd.read_csv(dados_csv)
-
+    #df.replace({'Patologia':[0,1,2,3,4,5,6,7]},{'Patologia':lista_nomes_patologias}, inplace=True)
     df.rename(columns={'Nome do Setor': 'NomeDoSetor', "É urgente?":"Urgente", "Tempo que vê a patologia":"TempoQueVe"}, inplace=True)
-    condicao = "Patologia == "+str(idPatologia)
+    print(df)
+
+    print("Nome: ",nomePatologia)
+
+    dfPatologias = df.groupby(["Patologia"])["Patologia"].count().reset_index(name="Quantidade de Registros").sort_values(by="Quantidade de Registros", ascending=False)
+    dfPatologias = dfPatologias.reset_index()  # make sure indexes pair with number of rows
+    id = 0
+    patologiasComID = []
+    for index, row in dfPatologias.iterrows():
+        patologiasComID.append(lista_nomes_patologias[row["Patologia"]])
+        id += 1
+    
+    indice_lista_nomes_patologias = 0
+    for patologia in lista_nomes_patologias:
+        if patologia == nomePatologia:
+            break
+        indice_lista_nomes_patologias += 1
+    print(indice_lista_nomes_patologias)
+    condicao = "Patologia == "+str(indice_lista_nomes_patologias)
+    print(condicao)
     df = df.query(condicao)
 
     n_total_ocorrencias = df.shape[0]
@@ -358,7 +432,7 @@ def viewPatologias(request, idPatologia):
         return render(request, 'patologia.html', context={
             'patologiaSemRegistros':True,
             'nomePatologia': nomePatologia,
-            'patologias': nomesPatologiasComID,
+            'patologias': patologiasComID,
         })
 
     setor_mais_ocorrencias = df.groupby(["NomeDoSetor"])["NomeDoSetor"].count().reset_index(name="Quantidade de Registros").sort_values(by="Quantidade de Registros", ascending=False)
@@ -411,7 +485,7 @@ def viewPatologias(request, idPatologia):
     contexto = {
         'patologiaSemRegistros':False,
         'nomePatologia': nomePatologia,
-        'patologias': nomesPatologiasComID,
+        'patologias': patologiasComID,
         'n_total_ocorrencias':n_total_ocorrencias,
         'porcentagemUrgencia': porcentagemUrgencia,
         'dia_mais_ocorrencias_patologia': dia_mais_ocorrencias_patologia,

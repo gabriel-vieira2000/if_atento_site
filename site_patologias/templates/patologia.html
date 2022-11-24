@@ -18,14 +18,14 @@
         <div class="col-4">
             <div class="row">
                 <form>
-                        <div class="form-group row">
-                            <select class="form-control" id="selectPatologia">
-                                    <option value="-1">Selecione outra patologia...</option>
-                                {% for patologia in patologias%}
-                                    <option value="{{patologia.0}}">{{patologia.1}}</option>
-                                {% endfor %}
-                            </select> 
-                        </div>
+                    <div class="form-group row">
+                        <select class="form-control" id="selectPatologia">
+                                <option value="-1">Selecione outra patologia...</option>
+                            {% for patologia in patologias%}
+                                <option value="{{patologia}}">{{patologia}}</option>
+                            {% endfor %}
+                        </select> 
+                    </div>
             </div>
         </div>
         <div class="col">

@@ -16,7 +16,7 @@ Including another URLconf
 from django.contrib import admin
 from django.http import HttpResponse
 from django.urls import path
-from site_patologias.views import viewLogin, validaLogin, logout, viewHome, viewTabelaOcorrencias, atualizaDadosCSV, viewSetores, viewPatologias, viewTabelaAdministradores, cadastraAdmin, alteraAdmin, deletaAdmin
+from site_patologias.views import viewLogin, validaLogin, logout, viewCadastroAdminPaginaInicial, viewHome, viewTabelaOcorrencias, atualizaDadosCSV, viewSetores, viewPatologias, viewTabelaAdministradores, cadastraAdmin, alteraAdmin, deletaAdmin
 
 
 urlpatterns = [
@@ -26,6 +26,7 @@ urlpatterns = [
     path('login/<str:erro>', viewLogin),
     path('validaLogin/', validaLogin),
     path('logout/', logout),
+    path('cadastro/', viewCadastroAdminPaginaInicial),
     path('administradores/', viewTabelaAdministradores),
     path('administradores/<str:erro>', viewTabelaAdministradores),
     path('cadastro/admin', cadastraAdmin),
@@ -35,5 +36,5 @@ urlpatterns = [
     path('ocorrencias/', viewTabelaOcorrencias),
     path('atualizaDados/', atualizaDadosCSV),
     path('setores/<int:idSetor>', viewSetores),
-    path('patologias/<int:idPatologia>', viewPatologias), 
+    path('patologias/<str:nomePatologia>', viewPatologias), 
 ]

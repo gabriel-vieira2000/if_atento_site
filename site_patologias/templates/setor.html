@@ -210,6 +210,7 @@
 
     document.getElementById("selectSetor").addEventListener("change", function (event) {
         setorSelecionado = event.target.value;
+        console.log(setorSelecionado);
         botaoSetor.href = `../setores/${setorSelecionado}`
     });
 

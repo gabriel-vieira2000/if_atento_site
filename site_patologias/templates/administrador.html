@@ -82,6 +82,7 @@
       <div class="modal-body">
         <form action="../cadastro/admin" method="POST" class="p-2">
           {% csrf_token %}
+          <input type="text" name="veioDoLogin" value="0" style="display:none;">
           <div class="row">
             <div class="form-group p-1">
                 <label for="inputNome">Nome Completo do Administrador: </label>
