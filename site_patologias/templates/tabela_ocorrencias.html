@@ -2,31 +2,34 @@
 
 {% block conteudo %}
 <div class="container">
-    <div class="row">
-        <div class="col-6"></div>
-        <div class="col-6">
-            <div class="row">
-                <form method="POST" action="../ocorrencias/">
-                    {% csrf_token %}
-                    <div class="form-group row">
-                        <select class="form-control" name="filtroPatologia" id="selectPatologia">
-                                <option value="-1">Filtrar Patologia</option>
-                            {% for patologia in patologias%}
-                                <option value="{{patologia}}">{{patologia}}</option>
-                            {% endfor %}
-                        </select>
-                        <select class="form-control" name="filtroSetor" id="selectPatologia">
-                            <option value="-1">Filtrar Setor</option>
-                            {% for setor in setores%}
-                                <option value="{{setor.0}}">{{setor.1}}</option>
-                            {% endfor %}
-                        </select>
-                        <button type="submit" class="btn btn-success">Aplicar Filtro</button> 
-                    </div>
-                </form>
-            </div>
+    <form method="POST" action="../ocorrencias/">
+        {% csrf_token %}
+        <div class="row g-4 flex flex-row-reverse mt-2">
+                <div class="col-auto">
+                    <p></p>
+                </div>
+                <div class="col-auto">
+                    <button type="submit" class="btn btn-success">Aplicar Filtro</button> 
+                </div>
+                <div class="col-auto">
+                    <select class="form-control align-self-right" name="filtroSetor" id="selectPatologia">
+                        <option value="-1" style="color:gray">Clique aqui para filtrar o setor</option>
+                        {% for setor in setores%}
+                            <option value="{{setor.1}}">{{setor.1}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-auto">
+                    <select class="form-control align-self-right" name="filtroPatologia" id="selectPatologia">
+                            <option value="-1" style="color:gray">Clique aqui para filtrar a patologia</option>
+                        {% for patologia in patologias%}
+                            <option value="{{patologia}}">{{patologia}}</option>
+                        {% endfor %}
+                    </select>
+                </div>    
         </div>
-    </div>
+    </form>
+
     <div class="d-flex justify-content-center align-items-center flex-column">
         <table class="table table-bordered table-striped table-hover table-sm justify-content-center" style="width:90%;max-width:90%;background-color: whitesmoke;margin-top:1%;">
             <caption>Ocorrências Registradas no Sistema</caption>
@@ -43,24 +46,30 @@
                 </tr>
             </thead>
             <tbody id="tabela-ocorrencias">
-            {% for index, row in tabela_ocorrencias.iterrows %}
-                <tr id="registro-{{index}}">
-                    <td class="text-center" data="{{index}}">
-                        {{index}}
-                    </td>
-                    {% for atributo in row %}
-                        {% if 's3.amazonaws.com/' in atributo %}
-                            <td class="text-center" data="{{atributo}}">
-                                <i class="bi bi-eye-fill"></i>
-                            </td>
-                        {% else %}
-                        <td class="text-center" data="{{atributo}}">
-                            {{atributo}}
-                        </td>
-                        {% endif %}
-                    {% endfor %}
+            {% if qtd_ocorrencias == 0 %}
+                <tr>
+                    <td colspan="8" class="text-center">Nenhuma ocorrência registrada até o momento</td>
                 </tr>
-            {% endfor %}
+            {% else %}
+                {% for index, row in tabela_ocorrencias.iterrows %}
+                    <tr id="registro-{{index}}">
+                        <td class="text-center" data="{{index}}">
+                            {{index}}
+                        </td>
+                        {% for atributo in row %}
+                            {% if 's3.amazonaws.com/' in atributo %}
+                                <td class="text-center" data="{{atributo}}">
+                                    <i class="bi bi-eye-fill"></i>
+                                </td>
+                            {% else %}
+                            <td class="text-center" data="{{atributo}}">
+                                {{atributo}}
+                            </td>
+                            {% endif %}
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            {% endif %}
             </tbody>
         </table>
         <div class="row">

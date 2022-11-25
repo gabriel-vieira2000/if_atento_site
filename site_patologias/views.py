@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 import os 
 import math
 from hashlib import sha256
+from datetime import date
 
 from .models import Admin
 from .forms import CadastraAdminForm
@@ -191,8 +192,12 @@ def viewHome(request):
     dadosGrafico1_y = quantidade_ocorrencias
     dadosGrafico2 = ocorrencias_patologias
 
+    dataInicial = date(2022, 9, 10)
+    dataAtual = date.today()
+    delta = dataAtual - dataInicial
+
     desvio_padrao_ocorrencias_por_dia = ocorrencias_por_dia["Quantidade de Registros"].std().round(2)
-    media_ocorrencias_por_dia = float(ocorrencias_por_dia["Quantidade de Registros"].mean().round(1))
+    media_ocorrencias_por_dia = round(float(ocorrencias_por_dia["Quantidade de Registros"].sum().round(1)/delta.days), 1)
     mediana_ocorrencias_por_dia = float(ocorrencias_por_dia["Quantidade de Registros"].median().round(1))
     moda_ocorrencias_por_dia = float(ocorrencias_por_dia["Quantidade de Registros"].mode().round(1))
 
@@ -235,7 +240,7 @@ def viewTabelaOcorrencias(request):
     id = 0
     patologiasComID = []
     for index, row in dfPatologias.iterrows():
-        patologiasComID.append(lista_nomes_patologias[row["Patologia"]])
+        patologiasComID.append(row["Patologia"])
         id += 1
 
     dfSetores = df.groupby(["Nome do Setor"])["Nome do Setor"].count().reset_index(name="Quantidade de Registros").sort_values(by="Quantidade de Registros", ascending=False)
@@ -251,14 +256,24 @@ def viewTabelaOcorrencias(request):
         filtroSetor = request.POST["filtroSetor"]
 
         if filtroPatologia != "-1" and filtroSetor != "-1":
-            df = df.query()
+            df.rename(columns={"Nome do Setor":"NomeDoSetor"}, inplace=True)
+            condicao = 'Patologia == "'+request.POST["filtroPatologia"]+'"'
+            df = df.query(condicao)
+            condicao = 'NomeDoSetor == "'+request.POST["filtroSetor"]+'"'
+            df = df.query(condicao)
+            df.rename(columns={"NomeDoSetor":"Nome do Setor"}, inplace=True)
         elif filtroPatologia != "-1":
-            print("Filtro de Patologia Ativo")
+            condicao = 'Patologia == "'+request.POST["filtroPatologia"]+'"'
+            df = df.query(condicao)
+            df.rename(columns={"NomeDoSetor":"Nome do Setor"}, inplace=True)
         elif filtroSetor != "-1":
-            print("Filtro de Setor Ativo")
+            df.rename(columns={"Nome do Setor":"NomeDoSetor"}, inplace=True)
+            condicao = 'NomeDoSetor == "'+request.POST["filtroSetor"]+'"'
+            df = df.query(condicao)
+            df.rename(columns={"NomeDoSetor":"Nome do Setor"}, inplace=True)
         
-
-    contexto = {'tabela_ocorrencias':df, 'setores':setoresComID, 'patologias':patologiasComID}
+    df.drop("index", axis=1, inplace=True)
+    contexto = {'tabela_ocorrencias':df, 'qtd_ocorrencias':df.shape[0], 'setores':setoresComID, 'patologias':patologiasComID}
     print(df.info())
 
     return render(request, 'tabela_ocorrencias.html', context=contexto)
