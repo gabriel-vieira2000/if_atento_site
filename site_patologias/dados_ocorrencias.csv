@@ -1,0 +1,67 @@
+,Nome do Setor,Patologia,Tempo que vê a patologia,É urgente?,Detalhes,Data do Registro,Foto
+0,PN 06,0,0,1,,19/11/2022,https://uploads-if-atento.s3.amazonaws.com/c4da7adc-9263-46fa-ac74-429a04db5c69.jpeg
+1,Laboratório de Cafeicultura,2,0,1,,19/11/2022,https://uploads-if-atento.s3.amazonaws.com/f87ab96d-4114-4808-b7c3-139109b5035c.jpeg
+2,Prefeitura e Estacionamento,2,0,1,,19/11/2022,https://uploads-if-atento.s3.amazonaws.com/37bc545f-e3e6-4744-b4cc-2000199829f1.jpeg
+3,Laboratório de Cafeicultura,2,0,1,Tinta soltando,18/11/2022,https://uploads-if-atento.s3.amazonaws.com/de4285b6-2d45-4c7f-aa56-ad37774e9ad5.jpeg
+4,Setor de Zootecnia 2,1,1,0,Portão enferrujado,16/11/2022,https://uploads-if-atento.s3.amazonaws.com/f6291565-150d-4ff2-8a1c-c5d84aeebf7a.jpeg
+5,Setor de Zootecnia 2,0,0,1,Infiltração em uma das construções da Z1,16/11/2022,https://uploads-if-atento.s3.amazonaws.com/f3d5ec8a-04a0-4a63-bae3-c6580f52cf5c.jpeg
+6,Setor de Assistência ao Educando,1,0,1,Marcas de corrosão no portão,11/11/2022,https://uploads-if-atento.s3.amazonaws.com/0f7e0c3f-96ad-401a-b671-8f8d5d18a06b.jpeg
+7,Almoxarifado,4,0,0,Grande mancha na parede,10/11/2022,https://uploads-if-atento.s3.amazonaws.com/1adbcd60-f6db-4619-989a-995b28458924.jpeg
+8,PN 06,0,0,1,,08/11/2022,https://uploads-if-atento.s3.amazonaws.com/d68f0946-b237-484a-9f09-e6c3a09c19ca.jpeg
+9,Prefeitura e Estacionamento,0,0,1,Infiltração atrás do prédio da prefeitura,08/11/2022,https://uploads-if-atento.s3.amazonaws.com/ea5b62ef-f51b-48c4-bdb5-5dee4299b1f2.jpeg
+10,Laboratório de Cafeicultura,4,1,1,,08/11/2022,https://uploads-if-atento.s3.amazonaws.com/d9fa4576-f19b-4b7f-a604-3d44c12748f9.jpeg
+11,Laboratório de Cafeicultura,0,0,1,,05/11/2022,https://uploads-if-atento.s3.amazonaws.com/7d963ed0-e9ef-4098-8af8-32ed88dde0f1.jpeg
+12,Laboratório de Cafeicultura,0,0,0,Marcas espessas de infiltração,03/11/2022,https://uploads-if-atento.s3.amazonaws.com/76bbe555-0323-474c-ae84-e7f0139c95cc.jpeg
+13,Prédio de Cafeicultura,0,1,0,Infiltração por toda a parede,03/11/2022,https://uploads-if-atento.s3.amazonaws.com/b1a6df26-6b0a-4ac6-8740-b5febdbfc9c1.jpeg
+14,Infra TI,4,2,0,Grande avaria na parede lateral,02/11/2022,https://uploads-if-atento.s3.amazonaws.com/a6dc4032-2d59-4d5c-a4d5-d93537984fa1.jpeg
+15,Infra TI,2,1,0,Grande perda de tinta da parede,01/11/2022,https://uploads-if-atento.s3.amazonaws.com/7f61388d-bf8c-4270-9a96-c4404478d257.jpeg
+16,Setor de Alimentos,2,1,1,Soltando pedaços do acabamento em baixo da parede,01/11/2022,https://uploads-if-atento.s3.amazonaws.com/10895efb-cfab-498b-995c-f1d3ffec774c.jpeg
+17,Prédio H,0,0,1,,28/10/2022,https://uploads-if-atento.s3.amazonaws.com/fa97840f-5c95-48c7-8265-e2fd52f91cc6.jpeg
+18,Construção Espaço Maker,3,0,1,Pequenas rachaduras surgindo,27/10/2022,https://uploads-if-atento.s3.amazonaws.com/65aca44f-dfd7-4919-b950-43de8c2b3200.jpeg
+19,Construção Espaço Maker,2,0,0,Tinta soltou,27/10/2022,https://uploads-if-atento.s3.amazonaws.com/e0e5d5c0-03c9-45b7-8136-f1f3665a6223.jpeg
+20,Construção Espaço Maker,0,0,1,,27/10/2022,
+21,Ginásio Poliesportivo,0,1,0,Grande mancha de infiltração na parte de baixo da parede,27/10/2022,https://uploads-if-atento.s3.amazonaws.com/cc27f8d7-829c-44f9-9d87-8261376dd970.jpeg
+22,Prédio de Informática,6,1,1,Banheiro feminino alunas do 3* andar com luz queimada ou com fiação adulterada ,28/9/2022,https://uploads-if-atento.s3.amazonaws.com/bacba1bc-3ad8-4805-97fd-da1fc3490bd7.jpg
+23,Agroindústria,0,1,0,Parede com muita infiltração,24/10/2022,https://uploads-if-atento.s3.amazonaws.com/a090c2b4-19e7-4b76-8ef4-0b65bc9911a3.jpeg
+24,Biblioteca,4,1,1,Pequenas bolhas na parede de trás,22/10/2022,https://uploads-if-atento.s3.amazonaws.com/21f54f50-271e-4180-95c5-d386f3b20e4a.jpeg
+25,Biblioteca,2,0,1,Pilastra perdendo um pouco da tinta,22/10/2022,https://uploads-if-atento.s3.amazonaws.com/c12c909b-92c8-49bd-96fa-0c1886f611f8.jpeg
+26,Prédio de Informática,3,1,0,Trinca na pilastra do prédio,21/10/2022,https://uploads-if-atento.s3.amazonaws.com/a5ed1b9b-c505-4fd9-a1b5-99105c83531c.jpeg
+27,Depósito,2,0,1,Parede de trás perdendo um pouco da tinta,21/10/2022,https://uploads-if-atento.s3.amazonaws.com/c75b3950-75c1-4973-a822-15701742cd0e.jpeg
+28,CEAD,3,1,1,Grande trinca na parede,20/10/2022,https://uploads-if-atento.s3.amazonaws.com/4bb58e31-ff9b-4d4c-9a89-c0a8d6f8f41a.jpeg
+29,CEAD,3,0,1,Grande trinca na parede,20/10/2022,
+30,NIPE,0,1,0,Grande mancha de infiltração,20/10/2022,https://uploads-if-atento.s3.amazonaws.com/9c1a882c-959c-4716-883f-a1b2a514a09e.jpeg
+31,Depósito,0,2,0,Sem descrição,20/10/2022,https://uploads-if-atento.s3.amazonaws.com/ad7a7cd6-730e-4a64-ac15-6cbceca5df9a.jpeg
+32,Depósito,0,2,1,Pequena infiltração no topo da parede,20/10/2022,https://uploads-if-atento.s3.amazonaws.com/f3e95579-8720-449d-ab52-3c9da59b5b4e.jpeg
+33,Refeitório,4,1,1,Precisando de um retoque na pintura,20/10/2022,https://uploads-if-atento.s3.amazonaws.com/a8b34704-5703-4e01-9804-7b58e9f3baf6.jpeg
+34,Cantina,0,2,0,Grande infiltração está fazendo a tinta soltar da parede,18/10/2022,https://uploads-if-atento.s3.amazonaws.com/53bbb6e7-5936-4ebb-961f-94ce93a705ae.jpeg
+35,Cantina,2,1,0,Tinta soltando da parede esquerda da cantina.,08/10/2022,https://uploads-if-atento.s3.amazonaws.com/c6c65945-ac23-469f-8118-339da5ff06bd.jpeg
+36,Laboratório de Solos e Pedologia,2,0,1,,07/10/2022,https://uploads-if-atento.s3.amazonaws.com/f07e0911-4833-4a8c-bcca-deed77937bfe.jpeg
+37,Laboratório de Solos e Pedologia,4,0,1,Parede lateral perdendo a tinta,07/10/2022,https://uploads-if-atento.s3.amazonaws.com/bbf6190a-ff38-4468-9d3c-7a87405011cf.jpeg
+38,Quadra de Esportes,0,2,0,Infiltração em toda a parte de baixo da parede,05/10/2022,https://uploads-if-atento.s3.amazonaws.com/c93a8cad-9217-4bfb-9e1b-1ffce1375ea9.jpeg
+39,Lavanderia,0,2,0,Parede da frente da lavanderia,03/10/2022,https://uploads-if-atento.s3.amazonaws.com/5475b312-7d2a-47cf-8e14-7b58044c9a7f.jpeg
+40,Almoxarifado,0,1,1,Mancha longa de infiltração,03/10/2022,https://uploads-if-atento.s3.amazonaws.com/3f44e263-cb11-4d46-a78b-9f66b4d5c7b2.jpeg
+41,Museu Histórico,0,0,1,Parede da frente do museu,03/10/2022,https://uploads-if-atento.s3.amazonaws.com/a64babfe-ee97-41b3-b7c9-cd9d01824312.jpeg
+42,CEAM,1,1,0,Barras de ferro muito enferrujadas,30/09/2022,https://uploads-if-atento.s3.amazonaws.com/a5457349-c256-4bb0-9998-a75fadda3c06.jpeg
+43,Horta,0,1,1,Infiltração grande,27/09/2022,https://uploads-if-atento.s3.amazonaws.com/841af28a-c336-4b6d-96c3-9c0798d6af4a.jpeg
+44,Horta,0,1,1,Infiltração grande,25/09/2022,https://uploads-if-atento.s3.amazonaws.com/841af28a-c336-4b6d-96c3-9c0798d6af4a.jpeg
+45,PROEJA,0,0,1,Parede com pintura avariada,25/09/2022,https://uploads-if-atento.s3.amazonaws.com/8a20d6a0-a6ff-4bb3-8efa-a822ddcdab14.jpeg
+46,Setor de Zootecnia 3,4,0,0,Parede perdendo a tinta,22/09/2022,https://uploads-if-atento.s3.amazonaws.com/67399afc-a09d-48c0-9f19-ae64e81ab314.jpeg
+47,Setor de Zootecnia 3,0,2,0,Construção inteira com infiltração,22/09/2022,https://uploads-if-atento.s3.amazonaws.com/39d9123a-4f50-4306-a37f-5c826a8961a5.jpeg
+48,Hospital Veterinário,1,1,0,Portão enferrujado,21/09/2022,https://uploads-if-atento.s3.amazonaws.com/f772ac7f-bb50-481b-ad16-c8211368e9c4.jpeg
+49,Granja de Frango de Corte,7,0,0,"Placa bem avariada, quase não dá para ler o conteúdo",19/09/2022,https://uploads-if-atento.s3.amazonaws.com/a96dde7e-685e-43c4-92f4-4ce4b0880a82.jpeg
+50,Granja de Frango de Corte,1,0,0,Portão com a fechadura enferrujada e frouxa,18/09/2022,https://uploads-if-atento.s3.amazonaws.com/f13560e0-6b79-4af2-a35c-1b141b1a943d.jpeg
+51,Hospital Veterinário,0,0,0,Infiltração na parede da frente,16/09/2022,https://uploads-if-atento.s3.amazonaws.com/62cff90a-e5e9-40da-a03d-c492960949b9.jpeg
+52,PROEJA,3,0,1,Trincas surgindo ao longo da parede,16/09/2022,https://uploads-if-atento.s3.amazonaws.com/f1a410bf-e44c-4211-91e9-0ce1b224f4a6.jpeg
+53,Hospital Veterinário,0,0,0,Manchas bem grande na parte de cima do hospital,16/09/2022,https://uploads-if-atento.s3.amazonaws.com/8d931df2-118b-4275-ab6f-d6865f723416.jpeg
+54,Abatedouro e Fábrica de Ração,3,2,1,,16/09/2022,https://uploads-if-atento.s3.amazonaws.com/133a58d3-2c42-4f59-bcff-b947610b2c3d.jpeg
+55,Canil,2,1,0,Parede com o revestimento descolando,16/09/2022,https://uploads-if-atento.s3.amazonaws.com/020e130b-0ba6-411c-820d-6db7480b4353.jpeg
+56,Canil,4,0,1,Bolhas por toda a parede,14/09/2022,https://uploads-if-atento.s3.amazonaws.com/70a50b47-5fca-4269-8929-cf33d4794724.jpeg
+57,Prédio de Edificações,0,0,1,,10/09/2022,https://uploads-if-atento.s3.amazonaws.com/32b9e354-3fc5-4943-82df-4ff51be79848.jpeg
+58,Prefeitura e Estacionamento,7,1,0,Folhas acumulando no bueiro que podem causar obstrução,10/09/2022,https://uploads-if-atento.s3.amazonaws.com/6a5d0ef0-49d0-4137-9432-b3e6aa8c3338.jpeg
+59,Prefeitura e Estacionamento,0,0,0,Base da caixa d'água com trincas e infiltrações,09/09/2022,https://uploads-if-atento.s3.amazonaws.com/b7c7e743-ec99-4395-afc7-9f7cc22c313f.jpeg
+60,Alojamento Feminino Bloco C,2,0,1,Frente do alojamento feminino,08/09/2022,https://uploads-if-atento.s3.amazonaws.com/003d26b5-e360-401f-9301-145bef5cbc2c.jpeg
+61,Prefeitura e Estacionamento,1,0,0,Aço em estado avançado de corrosão,08/09/2022,https://uploads-if-atento.s3.amazonaws.com/f382ad3e-605e-43f2-a02b-0a18c89c6a59.jpeg
+62,Alojamento Masculino Bloco B,3,0,1,Pequena trinca que apareceu na coluna do primeiro andar,08/09/2022,https://uploads-if-atento.s3.amazonaws.com/887b9e32-f356-4d90-88e2-4acc2767e160.jpeg
+63,Alojamento Masculino Bloco B,0,2,1,Em volta de todo o alojamento,04/09/2022,https://uploads-if-atento.s3.amazonaws.com/f49324d8-cae1-4797-915a-7bb811057fb8.jpeg
+64,Alojamento Masculino Bloco B,6,1,0,Várias tomadas não funcionam,02/09/2022,https://uploads-if-atento.s3.amazonaws.com/f587f35c-042b-4d0e-8c11-00994fc9b7be.jpeg
+65,Alojamento Masculino Bloco B,0,1,0,Grande mancha de infiltração na parede de um quarto do alojamento,02/09/2022,https://uploads-if-atento.s3.amazonaws.com/f7ef3994-1868-42e3-8ebb-a3006344fbf5.jpeg
