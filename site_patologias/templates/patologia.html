@@ -4,26 +4,22 @@
 
 <div class="container">
     <div class="row mt-2">
-        <div class="col-6">
+        <div class="col-8">
             <h5>Patologia: {{nomePatologia}}</h5>
         </div>
         <div class="col-4">
             <div class="row">
-                <form>
-                    <div class="form-group row">
-                        <select class="form-control" id="selectPatologia">
-                                <option value="-1">Selecione outra patologia...</option>
+                <div class="form-group row">
+                    <select class="form-control" id="selectPatologia">
+                            <option value="-1">Selecione outra patologia...</option>
                             {% for patologia in patologias%}
                                 <option value="{{patologia}}">{{patologia}}</option>
                             {% endfor %}
-                        </select> 
-                    </div>
+                    </select> 
+                </div>
             </div>
         </div>
-        <div class="col">
-            <a href="../patologias/1" id="botaoSelecionaPatologia" class="btn btn-success">Alterar Patologia</a>
-            </form>
-        </div>
+
     </div>
     {% if patologiaSemRegistros %}
         <div class="row">
@@ -205,13 +201,13 @@
 </script>
 
 <script>
-    var setorSelecionado = 1;
+    var patologiaSelecionada = 1;
 
     var botaoSetor = document.getElementById("botaoSelecionaPatologia");
 
     document.getElementById("selectPatologia").addEventListener("change", function (event) {
-        setorSelecionado = event.target.value;
-        botaoSetor.href = `../patologias/${setorSelecionado}`
+        patologiaSelecionada = event.target.value;
+        window.location.href = `../patologias/${patologiaSelecionada}`;
     });
 </script>
 
