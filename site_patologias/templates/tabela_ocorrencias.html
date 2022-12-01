@@ -116,7 +116,7 @@
             </div>
         </div>
         <div class="modal-footer">
-            <a class="btn btn-success" id="botaoAlteraResolvido" src="#" onclick="#">ALTERAR STATUS PARA RESOLVIDO</a>
+            <a class="btn btn-success" id="botaoAlteraStatus" src="#" onclick="#">ALTERAR STATUS PARA RESOLVIDO</a>
             <button class="btn btn-danger" id="botaoExcluirOcorrencia" src="#" onclick="#">EXCLUIR REGISTRO</button>    
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Voltar</button>
         </div>
@@ -125,8 +125,8 @@
   </div>
 
 <script>
-    function alteraStatusOcorrencia(chave){
-        window.location.href = window.location.origin+'/ocorrencias/edita/'+chave;
+    function alteraStatusOcorrencia(chave,tipoAlteracao){
+        window.location.href = window.location.origin+'/ocorrencias/edita/'+tipoAlteracao+'/'+chave;
     }
 
     function deletaOcorrrencia(chave){
@@ -155,7 +155,19 @@
             }else{
                 document.getElementById("fotoModal").innerHTML = "<h5 class='text-center'>Sem Foto</h5>";
             }
-            document.getElementById("botaoAlteraResolvido").setAttribute('onclick', ('alteraStatusOcorrencia('+tabela.children[i].children[0].getAttribute("data")+")"));
+
+            if(tabela.children[i].children[8].getAttribute("data") == 'Não resolvido'){
+                document.getElementById("botaoAlteraStatus").setAttribute('onclick', ('alteraStatusOcorrencia('+tabela.children[i].children[0].getAttribute("data")+",'resolvido')"));
+                document.getElementById("botaoAlteraStatus").setAttribute('class','btn btn-success');
+                document.getElementById("botaoAlteraStatus").innerText = "ALTERAR STATUS PARA RESOLVIDO";
+            }else if(tabela.children[i].children[8].getAttribute("data") == 'Excluído'){
+                document.getElementById("botaoAlteraStatus").remove();
+            }else{
+                document.getElementById("botaoAlteraStatus").setAttribute('onclick', ('alteraStatusOcorrencia('+tabela.children[i].children[0].getAttribute("data")+",'naoResolvido')"));
+                document.getElementById("botaoAlteraStatus").setAttribute('class','btn btn-warning');
+                document.getElementById("botaoAlteraStatus").innerText = "ALTERAR STATUS PARA NÃO RESOLVIDO";
+            }
+
             document.getElementById("botaoExcluirOcorrencia").setAttribute('onclick', ('deletaOcorrrencia('+tabela.children[i].children[0].getAttribute("data")+")"));
 
             document.getElementById("botaoModal").click();

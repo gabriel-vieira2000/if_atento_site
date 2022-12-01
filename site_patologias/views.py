@@ -228,7 +228,6 @@ def viewTabelaOcorrencias(request):
     caminho_pasta = os.path.dirname(__file__)
     dados_csv = os.path.join(caminho_pasta, 'dados_ocorrencias.csv')
     df = pd.read_csv(dados_csv)
-    df.drop("Unnamed: 0", axis=1, inplace=True)
     df["Tempo que vê a patologia"].replace([0,1,2], ["Primeira Vez que Vi", "Comecei a ver recentemente (< 1 ano)", "Já vejo a muito tempo? ( > 1 ano)"], inplace=True)
     df["É urgente?"].replace([0,1],['Sim', 'Não'],inplace=True)
     df.replace({'Patologia':[0,1,2,3,4,5,6,7]},{'Patologia':lista_nomes_patologias}, inplace=True)
@@ -286,14 +285,25 @@ def atualizaDadosCSV(request):
 
     for registro in dados["results"]:
         chaves.append(registro["key"])
+    
+    chavesResolvidos = []
+    caminho_pasta = os.path.dirname(__file__)
+    with open(os.path.join(caminho_pasta, 'resolvidos.txt'),'r') as resolvidos:
+        for linha in resolvidos:
+            linha = linha.replace('\n','')
+            chavesResolvidos.append(linha)
+    print(chavesResolvidos)
 
     registros_ocorrencias = []
     for chave in chaves:
         url = api_url + "/" + chave
         req = requests.get(url)
         dados = dict(req.json())
-        registros_ocorrencias.append([chave, dados['props']['nomeSetor'],dados['props']['patologia'],dados['props']['tempoPatologia'],dados['props']['urgencia'],dados['props']['textoDetalhes'],dados['props']['dataRegistro'],dados['props']['foto'],"Status"])
-    print(registros_ocorrencias)
+        status = "Não resolvido"
+        for chaveResolvido in chavesResolvidos:
+            if chave == chaveResolvido:
+                status = "Resolvido"
+        registros_ocorrencias.append([chave, dados['props']['nomeSetor'],dados['props']['patologia'],dados['props']['tempoPatologia'],dados['props']['urgencia'],dados['props']['textoDetalhes'],dados['props']['dataRegistro'],dados['props']['foto'],status])
 
     df = pd.DataFrame(registros_ocorrencias, columns=['Índice','Nome do Setor', 'Patologia', 'Tempo que vê a patologia','É urgente?','Detalhes','Data do Registro','Foto','Status'])
     df.to_csv('./site_patologias/dados_ocorrencias.csv',index=False)
@@ -301,26 +311,41 @@ def atualizaDadosCSV(request):
 
     return redirect('/ocorrencias')
 
-def alteraStatusOcorrencia(request, chaveOcorrencia):
+def alteraStatusOcorrencia(request, chaveOcorrencia, tipoAlteracao):
     chaves_resolvidos = []
     caminho_pasta = os.path.dirname(__file__)
-    with open(os.path.join(caminho_pasta, 'resolvidos.txt'),'a') as resolvidos:
-        resolvidos.write(chaveOcorrencia+"\n")
-    with open(os.path.join(caminho_pasta, 'resolvidos.txt'),'r') as resolvidos:
-        for linha in resolvidos:
-            print(chaves_resolvidos.append(linha))
-    print(chaves_resolvidos)       
     dados_csv = os.path.join(caminho_pasta, 'dados_ocorrencias.csv')
     df = pd.read_csv(dados_csv)
-    df.loc[df['Índice'] == int(chaveOcorrencia), 'Status'] = 'Resolvido'
+    if tipoAlteracao == 'resolvido':
+        with open(os.path.join(caminho_pasta, 'resolvidos.txt'),'a') as resolvidos:
+            resolvidos.write(chaveOcorrencia+"\n")
+            dados_csv = os.path.join(caminho_pasta, 'dados_ocorrencias.csv')
+            df = pd.read_csv(dados_csv)
+            df.loc[df['Índice'] == int(chaveOcorrencia), 'Status'] = 'Resolvido'
+    elif tipoAlteracao == 'naoResolvido':
+        with open(os.path.join(caminho_pasta, 'resolvidos.txt'),'r') as resolvidos:
+            with open(os.path.join(caminho_pasta, 'resolvidos_2.txt'),'w') as novoResolvidos:
+                for linha in resolvidos:
+                    print(linha.strip('\n'),' - ',chaveOcorrencia)
+                    if linha.strip('\n') != chaveOcorrencia:
+                        novoResolvidos.write(linha)      
+        df.loc[df['Índice'] == int(chaveOcorrencia), 'Status'] = 'Não Resolvido'
+        os.remove(os.path.join(caminho_pasta, 'resolvidos.txt'))
+        os.rename(os.path.join(caminho_pasta, 'resolvidos_2.txt'), os.path.join(caminho_pasta, 'resolvidos.txt'))
+    
+    with open(os.path.join(caminho_pasta, 'resolvidos.txt'),'r') as resolvidos:
+        for linha in resolvidos:
+            print(chaves_resolvidos.append(linha.replace('\n','')))
+    print(chaves_resolvidos)       
+   
     df.to_csv('./site_patologias/dados_ocorrencias.csv',index=False)
     return redirect('/ocorrencias')
 
 def deletaOcorrencia(request, chaveOcorrencia):
-    #api_url = str(os.getenv('API_BASE_URL'))+'/'+chaveOcorrencia
-    #print(api_url)
-    #req = requests.delete(api_url)
-    #print(req.text)
+    api_url = str(os.getenv('API_BASE_URL'))+'/'+chaveOcorrencia
+    print(api_url)
+    req = requests.delete(api_url)
+    print(req.text)
     caminho_pasta = os.path.dirname(__file__)
     dados_csv = os.path.join(caminho_pasta, 'dados_ocorrencias.csv')
     df = pd.read_csv(dados_csv)

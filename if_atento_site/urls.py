@@ -34,7 +34,7 @@ urlpatterns = [
     path('exclusao/admin', deletaAdmin),
     path('home/', viewHome),
     path('ocorrencias/', viewTabelaOcorrencias),
-    path('ocorrencias/edita/<str:chaveOcorrencia>', alteraStatusOcorrencia),
+    path('ocorrencias/edita/<str:tipoAlteracao>/<str:chaveOcorrencia>', alteraStatusOcorrencia),
     path('ocorrencias/deleta/<str:chaveOcorrencia>', deletaOcorrencia),
     path('atualizaDados/', atualizaDadosCSV),
     path('setores/<int:idSetor>', viewSetores),
