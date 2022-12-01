@@ -35,9 +35,6 @@
             <caption>Ocorrências Registradas no Sistema</caption>
             <thead>
                 <tr>
-                    <th class="text-center" style="width: 3%">
-                        Índice
-                    </th>
                     {% for col in tabela_ocorrencias.columns %}
                         <th class="text-center" style="width: 5%">
                         {{col}}
@@ -53,18 +50,15 @@
             {% else %}
                 {% for index, row in tabela_ocorrencias.iterrows %}
                     <tr id="registro-{{index}}">
-                        <td class="text-center" data="{{index}}">
-                            {{index}}
-                        </td>
                         {% for atributo in row %}
                             {% if 's3.amazonaws.com/' in atributo %}
                                 <td class="text-center" data="{{atributo}}">
                                     <i class="bi bi-eye-fill"></i>
                                 </td>
                             {% else %}
-                            <td class="text-center" data="{{atributo}}">
-                                {{atributo}}
-                            </td>
+                                <td class="text-center" data="{{atributo}}">
+                                    {{atributo}}
+                                </td>
                             {% endif %}
                         {% endfor %}
                     </tr>
@@ -122,13 +116,23 @@
             </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Voltar</button>
+            <a class="btn btn-success" id="botaoAlteraResolvido" src="#" onclick="#">ALTERAR STATUS PARA RESOLVIDO</a>
+            <button class="btn btn-danger" id="botaoExcluirOcorrencia" src="#" onclick="#">EXCLUIR REGISTRO</button>    
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Voltar</button>
         </div>
       </div>
     </div>
   </div>
 
 <script>
+    function alteraStatusOcorrencia(chave){
+        window.location.href = window.location.origin+'/ocorrencias/edita/'+chave;
+    }
+
+    function deletaOcorrrencia(chave){
+        window.location.href = window.location.origin+'/ocorrencias/deleta/'+chave;
+    }
+
     tabela = document.getElementById("tabela-ocorrencias");
 
     for(let i=0; i<tabela.childElementCount; i++)
@@ -151,6 +155,9 @@
             }else{
                 document.getElementById("fotoModal").innerHTML = "<h5 class='text-center'>Sem Foto</h5>";
             }
+            document.getElementById("botaoAlteraResolvido").setAttribute('onclick', ('alteraStatusOcorrencia('+tabela.children[i].children[0].getAttribute("data")+")"));
+            document.getElementById("botaoExcluirOcorrencia").setAttribute('onclick', ('deletaOcorrrencia('+tabela.children[i].children[0].getAttribute("data")+")"));
+
             document.getElementById("botaoModal").click();
         });
 

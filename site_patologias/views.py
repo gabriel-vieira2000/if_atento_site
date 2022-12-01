@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 
 import pandas as pd
@@ -28,7 +28,7 @@ setores = ['Guarita', 'Laboratório de Cafeicultura', 'Prédio da Cafeicultura',
 # Views
 def viewLogin(request, erro=None):
     if request.session.get("usuario-autenticado", None) == True:
-        return viewHome(request)
+        return redirect('/home')
 
     if erro != None:
         mensagemErro = "Erro ao acessar! Os dados informados são inválidos! Por favor, tente novamente."
@@ -37,7 +37,7 @@ def viewLogin(request, erro=None):
 
 def validaLogin(request):
     if not request.POST:
-        return viewLogin(request, 'erro')
+        return redirect('/login/erro')
 
     email = request.POST["email"]
     senha = sha256(request.POST["senha"].encode('ascii')).hexdigest()
@@ -46,13 +46,13 @@ def validaLogin(request):
         if admin.email == email and admin.senha == senha:
             request.session["usuario-autenticado"] = True
             print(request.session["usuario-autenticado"])
-            return viewHome(request)
-    return viewLogin(request, 'erro')
+            return redirect('/home')
+    return redirect('/login/erro')
 
 def logout(request):
     if request.session.get("usuario-autenticado", None) == True:
         del request.session["usuario-autenticado"]
-    return viewLogin(request)
+    return redirect('/login')
 
 def viewCadastroAdminPaginaInicial(request, erro=None):
     if erro == 'erroJaExiste':
@@ -67,7 +67,7 @@ def viewCadastroAdminPaginaInicial(request, erro=None):
 
 def viewTabelaAdministradores(request, erro=None):
     if request.session.get("usuario-autenticado", None) != True:
-        return viewLogin(request)
+        return redirect('/login')
 
     mensagemErro = None
     if erro == 'erroCadastro':
@@ -88,7 +88,7 @@ def viewTabelaAdministradores(request, erro=None):
 
 def cadastraAdmin(request):
     if not request.POST:
-        return viewTabelaAdministradores(request)
+        return redirect('/administradores/')
 
     print(request.POST["veioDoLogin"])
     if request.POST["veioDoLogin"] == "1":
@@ -105,7 +105,7 @@ def cadastraAdmin(request):
         novoAdmin.save()
         request.session["usuario-autenticado"] = True
         print(request.session["usuario-autenticado"])
-        return viewHome(request)
+        return redirect('/home')
     else:
         nomeAdmin = request.POST["nome"]
         emailAdmin = request.POST["email"]
@@ -116,11 +116,11 @@ def cadastraAdmin(request):
             if admin.nome == novoAdmin.nome or admin.email == novoAdmin.email:
                 return viewTabelaAdministradores(request, 'erroCadastro')
         novoAdmin.save()
-        return viewTabelaAdministradores(request)
+        return redirect('/administradores/')
 
 def alteraAdmin(request):
     if not request.POST:
-        return viewTabelaAdministradores(request)
+        return redirect('/administradores/')
     idAdmin = request.POST["id"]
     nomeAdmin = request.POST["nome"]
     emailAdmin = request.POST["email"]
@@ -140,18 +140,18 @@ def alteraAdmin(request):
     adminAlterar.email = emailAdmin
     adminAlterar.senha = senhaAdmin
     adminAlterar.save()
-    return viewTabelaAdministradores(request)
+    return redirect('/administradores/')
 
 def deletaAdmin(request):
     if not request.POST or request.POST["id"] == "#":
         return viewTabelaAdministradores(request, 'erroExclusao')
     admin = Admin.objects.get(id=int(request.POST["id"]))
     admin.delete()
-    return viewTabelaAdministradores(request)
+    return redirect('/administradores/')
 
 def viewHome(request):
     if request.session.get("usuario-autenticado", None) != True:
-        return viewLogin(request)
+        return redirect('/login')
 
     caminho_pasta = os.path.dirname(__file__)
     dados_csv = os.path.join(caminho_pasta, 'dados_ocorrencias.csv')
@@ -221,7 +221,7 @@ def viewHome(request):
 
 def viewTabelaOcorrencias(request):
     if request.session.get("usuario-autenticado", None) != True:
-        return viewLogin(request)
+        return redirect('/login')
 
     global lista_nomes_patologias
     global setores
@@ -292,14 +292,41 @@ def atualizaDadosCSV(request):
         url = api_url + "/" + chave
         req = requests.get(url)
         dados = dict(req.json())
-        registros_ocorrencias.append([dados['props']['nomeSetor'],dados['props']['patologia'],dados['props']['tempoPatologia'],dados['props']['urgencia'],dados['props']['textoDetalhes'],dados['props']['dataRegistro'],dados['props']['foto']])
+        registros_ocorrencias.append([chave, dados['props']['nomeSetor'],dados['props']['patologia'],dados['props']['tempoPatologia'],dados['props']['urgencia'],dados['props']['textoDetalhes'],dados['props']['dataRegistro'],dados['props']['foto'],"Status"])
     print(registros_ocorrencias)
 
-    df = pd.DataFrame(registros_ocorrencias, columns=['Nome do Setor', 'Patologia', 'Tempo que vê a patologia','É urgente?','Detalhes','Data do Registro','Foto'])
-    df.to_csv('./site_patologias/dados_ocorrencias.csv')
+    df = pd.DataFrame(registros_ocorrencias, columns=['Índice','Nome do Setor', 'Patologia', 'Tempo que vê a patologia','É urgente?','Detalhes','Data do Registro','Foto','Status'])
+    df.to_csv('./site_patologias/dados_ocorrencias.csv',index=False)
     contexto = {'tabela_ocorrencias':df}
 
-    return viewTabelaOcorrencias(request)
+    return redirect('/ocorrencias')
+
+def alteraStatusOcorrencia(request, chaveOcorrencia):
+    chaves_resolvidos = []
+    caminho_pasta = os.path.dirname(__file__)
+    with open(os.path.join(caminho_pasta, 'resolvidos.txt'),'a') as resolvidos:
+        resolvidos.write(chaveOcorrencia+"\n")
+    with open(os.path.join(caminho_pasta, 'resolvidos.txt'),'r') as resolvidos:
+        for linha in resolvidos:
+            print(chaves_resolvidos.append(linha))
+    print(chaves_resolvidos)       
+    dados_csv = os.path.join(caminho_pasta, 'dados_ocorrencias.csv')
+    df = pd.read_csv(dados_csv)
+    df.loc[df['Índice'] == int(chaveOcorrencia), 'Status'] = 'Resolvido'
+    df.to_csv('./site_patologias/dados_ocorrencias.csv',index=False)
+    return redirect('/ocorrencias')
+
+def deletaOcorrencia(request, chaveOcorrencia):
+    #api_url = str(os.getenv('API_BASE_URL'))+'/'+chaveOcorrencia
+    #print(api_url)
+    #req = requests.delete(api_url)
+    #print(req.text)
+    caminho_pasta = os.path.dirname(__file__)
+    dados_csv = os.path.join(caminho_pasta, 'dados_ocorrencias.csv')
+    df = pd.read_csv(dados_csv)
+    df.loc[df['Índice'] == int(chaveOcorrencia), 'Status'] = 'Excluído'
+    df.to_csv('./site_patologias/dados_ocorrencias.csv',index=False)
+    return redirect('/ocorrencias')
 
 def viewSetores(request, idSetor):
     if request.session.get("usuario-autenticado", None) != True:
